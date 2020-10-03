@@ -44,7 +44,9 @@
      SUB = 260,
      MUL = 261,
      DIV = 262,
-     CR = 263
+     CR = 263,
+     LP = 264,
+     RP = 265
    };
 #endif
 /* Tokens.  */
@@ -54,6 +56,8 @@
 #define MUL 261
 #define DIV 262
 #define CR 263
+#define LP 264
+#define RP 265
 
 
 
@@ -66,7 +70,7 @@ typedef union YYSTYPE
     double  double_value;
 }
 /* Line 1529 of yacc.c.  */
-#line 70 "y.tab.h"
+#line 74 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
