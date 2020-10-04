@@ -25,7 +25,7 @@ line
         yyclearin; // 丢弃预读取的记号
         yyerrok;   // 通知yacc程序已成功从错误的状态中恢复了 
     }
-expression
+expression  // 可以抽象为单个和项或是两个表达式做和的形式
     : term
     | expression ADD term
     {
@@ -36,7 +36,7 @@ expression
         $$ = $1 - $3;
     }
     ;
-term
+term    // 可以抽象成单个一元表达式或者是两个表达式做乘或是除法
     : primary_expression
     | term MUL primary_expression
     {
@@ -52,6 +52,10 @@ primary_expression
     | LP expression RP // 括号内可以是任意完整四则表达式的组合
     {
         $$ = $2;
+    }
+    | SUB expression
+    {
+        $$ = - $2;
     }
     ;
 %%
