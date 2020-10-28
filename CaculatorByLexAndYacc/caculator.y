@@ -69,10 +69,12 @@ yyerror(char const *str)
 
 int main(void)
 {
+    // 如果在变量定义之前要使用该变量，则应在使用之前加 extern 声明变量，使作用域扩展到从声明开始到本文件结束
     extern int yyparse(void);
     extern FILE *yyin;
 
     yyin = stdin;
+    // 如果返回的不是空，就说明出现了错误
     if(yyparse()){
         fprintf(stderr, "Error! Error! \n");
         exit(1);
