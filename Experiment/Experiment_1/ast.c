@@ -125,7 +125,7 @@ void display(struct ASTNode *T, int indent)
                     printf("%*c %s\n", indent + 6, ' ', T0->ptr[0]->type_id);
                 else if (T0->ptr[0]->kind == ASSIGNOP)
                 {
-                    printf("%*c %s ASSIGNOP\n ", indent + 6, ' ', T0->ptr[0]->ptr[0]->type_id);
+                    printf("%*c %s 赋值为\n ", indent + 6, ' ', T0->ptr[0]->ptr[0]->type_id);
                     display(T0->ptr[0]->ptr[1], indent + strlen(T0->ptr[0]->ptr[0]->type_id) + 7); //显示初始化表达式
                 }
                 T0 = T0->ptr[1];

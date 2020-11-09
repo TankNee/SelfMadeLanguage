@@ -950,12 +950,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case YY_STATE_EOF(BLOCK_COMMENT):
 #line 54 "exp.l"
-{printf("Error type B :Wrong Usage of Block Comment \"%s\"\n\t at Line %d\n",yytext,yylineno);}
+{printf("Error type B :Wrong Usage of Block Comment \"%s\"\n\t at Line %d\n",yytext,yylineno); return 1;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 55 "exp.l"
-{};
+{}
 	YY_BREAK
 case 30:
 /* rule 30 can match eol */
@@ -973,7 +973,7 @@ BEGIN INITIAL;
 case 31:
 YY_RULE_SETUP
 #line 61 "exp.l"
-{};
+{}
 	YY_BREAK
 case 32:
 /* rule 32 can match eol */

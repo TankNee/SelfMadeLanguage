@@ -51,14 +51,14 @@ float  ([0-9]*\.[0-9]+)|([0-9]+\.)
 <INITIAL>"//"     		BEGIN LINE_COMMENT;
 <BLOCK_COMMENT>\n		{yycolumn=1;}
 <BLOCK_COMMENT>"*/"		{BEGIN INITIAL;}
-<BLOCK_COMMENT><<EOF>> 	{printf("Error type B :Wrong Usage of Block Comment \"%s\"\n\t at Line %d\n",yytext,yylineno);}
-<BLOCK_COMMENT>.      	{};
+<BLOCK_COMMENT><<EOF>> 	{printf("Error type B :Wrong Usage of Block Comment \"%s\"\n\t at Line %d\n",yytext,yylineno); return 1;}
+<BLOCK_COMMENT>.      	{}
 <LINE_COMMENT>\n  {
     yycolumn=1;
     BEGIN INITIAL;
 }
 <LINE_COMMENT><<EOF>>   BEGIN INITIAL;
-<LINE_COMMENT>.   		{};
+<LINE_COMMENT>.   		{}
 <INITIAL>[\n]        	{yycolumn=1;}   
 <INITIAL>[ \r\t]     	{}   
 <INITIAL>.				{printf("Error type A :Mysterious character \"%s\"\n\t at Line %d\n",yytext,yylineno);}
