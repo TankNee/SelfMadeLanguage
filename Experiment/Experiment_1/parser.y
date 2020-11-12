@@ -20,7 +20,7 @@ int yylex();
 	struct ASTNode *ptr;
 };
 
-//  %type 定义非终结符的语义值类型
+//  %type 定义非终结符的语义值类型,就如同文档之中定义的那样，所有的非终结符都是抽象语法树节点的指针
 %type  <ptr> program ExtDefList ExtDef  Specifier ExtDecList FuncDec CompSt VarList VarDec ParamDec Stmt StmList DefList Def DecList Dec Exp Args 
 
 //% token 定义终结符的语义值类型
@@ -48,8 +48,9 @@ int yylex();
 
 %%
 
-program: ExtDefList    { 
-        display($1,0); 
+program: ExtDefList    {
+        // 打印抽象语法树 
+        display($1,0);
         // semantic_Analysis0($1);
 }     //显示语法树,语义分析
          ; 
@@ -57,7 +58,7 @@ ExtDefList: {$$=NULL;}
           | ExtDef ExtDefList {$$=mknode(2,EXT_DEF_LIST,yylineno,$1,$2);}   //每一个EXTDEFLIST的结点，其第1棵子树对应一个外部变量声明或函数
           ;  
 ExtDef:   Specifier ExtDecList SEMI   {$$=mknode(2,EXT_VAR_DEF,yylineno,$1,$2);}   //该结点对应一个外部变量声明
-         |Specifier FuncDec CompSt    {$$=mknode(3,FUNC_DEF,yylineno,$1,$2,$3);}         //该结点对应一个函数定义
+         | Specifier FuncDec CompSt    {$$=mknode(3,FUNC_DEF,yylineno,$1,$2,$3);}         //该结点对应一个函数定义
          | error SEMI   {$$=NULL;}
          ;
 Specifier:  TYPE    {$$=mknode(0,TYPE,yylineno);strcpy($$->type_id,$1);$$->type=!strcmp($1,"int")?INT:FLOAT;}   
@@ -112,8 +113,8 @@ Exp:    Exp ASSIGNOP Exp {$$=mknode(2,ASSIGNOP,yylineno,$1,$3);strcpy($$->type_i
       | LP Exp RP     {$$=$2;}
       | MINUS Exp %prec UMINUS   {$$=mknode(1,UMINUS,yylineno,$2);strcpy($$->type_id,"UMINUS");}
       | NOT Exp       {$$=mknode(1,NOT,yylineno,$2);strcpy($$->type_id,"NOT");}
-      | DPLUS  Exp      {$$=mknode(1,DPLUS,yylineno,$2);strcpy($$->type_id,"DPLUS");}
-      |   Exp DPLUS      {$$=mknode(1,DPLUS,yylineno,$1);strcpy($$->type_id,"DPLUS");}
+      | DPLUS  Exp    {$$=mknode(1,DPLUS,yylineno,$2);strcpy($$->type_id,"DPLUS");}
+      | Exp DPLUS     {$$=mknode(1,DPLUS,yylineno,$1);strcpy($$->type_id,"DPLUS");}
       | ID LP Args RP {$$=mknode(1,FUNC_CALL,yylineno,$3);strcpy($$->type_id,$1);}
       | ID LP RP      {$$=mknode(0,FUNC_CALL,yylineno);strcpy($$->type_id,$1);}
       | ID            {$$=mknode(0,ID,yylineno);strcpy($$->type_id,$1);}

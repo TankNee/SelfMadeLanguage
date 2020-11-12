@@ -3,16 +3,21 @@
 
 struct ASTNode *mknode(int num, int kind, int pos, ...)
 {
+    // 构建抽象语法树的节点，其中的num代表子树的个数（度），kind代表节点类型，pos代表语句所在的行号
+    // 这个函数还是用了不定参数来接受数量不一的节点构造
     struct ASTNode *T = (struct ASTNode *)calloc(sizeof(struct ASTNode), 1);
     int i = 0;
     T->kind = kind;
     T->pos = pos;
+    // 处理不定参数
     va_list pArgs;
     va_start(pArgs, pos);
     for (i = 0; i < num; i++)
         T->ptr[i] = va_arg(pArgs, struct ASTNode *);
     while (i < 4)
+        // 如果参数个数少于四个，那么就把数组中剩下的位置用NULL占位
         T->ptr[i++] = NULL;
+    // 不定参数处理结束
     va_end(pArgs);
     return T;
 }
@@ -125,7 +130,7 @@ void display(struct ASTNode *T, int indent)
                     printf("%*c %s\n", indent + 6, ' ', T0->ptr[0]->type_id);
                 else if (T0->ptr[0]->kind == ASSIGNOP)
                 {
-                    printf("%*c %s 赋值为\n ", indent + 6, ' ', T0->ptr[0]->ptr[0]->type_id);
+                    printf("%*c将 %s 赋值为\n ", indent + 6, ' ', T0->ptr[0]->ptr[0]->type_id);
                     display(T0->ptr[0]->ptr[1], indent + strlen(T0->ptr[0]->ptr[0]->type_id) + 7); //显示初始化表达式
                 }
                 T0 = T0->ptr[1];
@@ -133,12 +138,15 @@ void display(struct ASTNode *T, int indent)
             break;
         case ID:
             printf("%*cID： %s\n", indent, ' ', T->type_id);
+            printf("%*c二元式为：(ID,%s)\n", indent, ' ', T->type_id);
             break;
         case INT:
             printf("%*cINT：%d\n", indent, ' ', T->type_int);
+            printf("%*c二元式为：(INT,%d)\n", indent, ' ', T->type_int);
             break;
         case FLOAT:
             printf("%*cFLOAT：%f\n", indent, ' ', T->type_float);
+            printf("%*c二元式为：(FLOAT,%f)\n", indent, ' ', T->type_float);
             break;
         case ASSIGNOP:
         case AND:
@@ -173,6 +181,170 @@ void display(struct ASTNode *T, int indent)
             }
             //                    printf("%*c第%d个实际参数表达式：\n",indent,' ',i);
             //                  display(T,indent+3);
+            printf("\n");
+            break;
+        }
+    }
+}
+/**
+ * 打印二元组
+ * */
+void displayTwoTuple(struct ASTNode *T, int indent)
+{ //对抽象语法树的先根遍历
+    int i = 1;
+    struct ASTNode *T0;
+    if (T)
+    {
+        switch (T->kind)
+        {
+        case EXT_DEF_LIST:
+            displayTwoTuple(T->ptr[0], indent); //显示该外部定义（外部变量和函数）列表中的第一个
+            displayTwoTuple(T->ptr[1], indent); //显示该外部定义列表中的其它外部定义
+            break;
+        case EXT_VAR_DEF:
+            printf("%*c(外部变量定义,%s)\n", indent, ' ', T->type_id);
+            displayTwoTuple(T->ptr[0], indent + 3); //显示外部变量类型
+            printf("%*c(变量名,\n", indent + 3, ' ');
+            displayTwoTuple(T->ptr[1], indent + 6); //显示变量列表
+            break;
+        case TYPE:
+            printf("%*c(类型, %s)\n", indent, ' ', T->type_id);
+            break;
+        case EXT_DEC_LIST:
+            displayTwoTuple(T->ptr[0], indent); //依次显示外部变量名，
+            displayTwoTuple(T->ptr[1], indent); //后续还有相同的，仅显示语法树此处理代码可以和类似代码合并
+            break;
+        case FUNC_DEF:
+            printf("%*c(函数定义%s)\n", indent, ' ', T->type_id);
+            displayTwoTuple(T->ptr[0], indent + 3); //显示函数返回类型
+            displayTwoTuple(T->ptr[1], indent + 3); //显示函数名和参数
+            displayTwoTuple(T->ptr[2], indent + 3); //显示函数体
+            break;
+        case FUNC_DEC:
+            printf("%*c(函数名,%s)\n", indent, ' ', T->type_id);
+            if (T->ptr[0])
+            {
+                printf("%*c(函数形参)\n", indent, ' ');
+                displayTwoTuple(T->ptr[0], indent + 3); //显示函数参数列表
+            }
+            else
+                printf("%*c(无参函数)\n", indent + 3, ' ');
+            break;
+        case PARAM_LIST:
+            displayTwoTuple(T->ptr[0], indent); //依次显示全部参数类型和名称，
+            displayTwoTuple(T->ptr[1], indent);
+            break;
+        case PARAM_DEC:
+            printf("%*c(类型,%s), (参数名,%s)\n", indent, ' ', T->ptr[0]->type == INT ? "int" : "float", T->ptr[1]->type_id);
+            break;
+        case EXP_STMT:
+            printf("%*c(表达式语句,%s)\n", indent, ' ', T->type_id);
+            displayTwoTuple(T->ptr[0], indent + 3);
+            break;
+        case RETURN:
+            printf("%*c(返回语句,%s)\n", indent, ' ', T->type_id);
+            displayTwoTuple(T->ptr[0], indent + 3);
+            break;
+        case COMP_STM:
+            printf("%*c(复合语句,(%d)\n", indent, ' ', T->pos);
+            printf("%*c(复合语句的变量定义部分,\n", indent + 3, ' ');
+            displayTwoTuple(T->ptr[0], indent + 6); //显示定义部分
+            printf("%*c(复合语句的语句部分,\n", indent + 3, ' ');
+            displayTwoTuple(T->ptr[1], indent + 6); //显示语句部分
+            break;
+        case STM_LIST:
+            displayTwoTuple(T->ptr[0], indent); //显示第一条语句
+            displayTwoTuple(T->ptr[1], indent); //显示剩下语句
+            break;
+        case WHILE:
+            printf("%*c(循环语句,(%d)\n", indent, ' ', T->pos);
+            printf("%*c(循环条件,\n", indent + 3, ' ');
+            displayTwoTuple(T->ptr[0], indent + 6); //显示循环条件
+            printf("%*c(循环体,(%d)\n", indent + 3, ' ', T->pos);
+            displayTwoTuple(T->ptr[1], indent + 6); //显示循环体
+            break;
+        case IF_THEN:
+            printf("%*c(条件语句(IF_THEN),%s)\n", indent, ' ', T->type_id);
+            printf("%*c(条件,\n", indent + 3, ' ');
+            displayTwoTuple(T->ptr[0], indent + 6); //显示条件
+            printf("%*c(IF子句,%s)\n", indent + 3, ' ', T->type_id);
+            displayTwoTuple(T->ptr[1], indent + 6); //显示if子句
+            break;
+        case IF_THEN_ELSE:
+            printf("%*c(条件语句(IF_THEN_ELSE),%s)\n", indent, ' ', T->type_id);
+            printf("%*c(条件,\n", indent + 3, ' ');
+            displayTwoTuple(T->ptr[0], indent + 6); //显示条件
+            printf("%*c(IF子句,%s)\n", indent + 3, ' ', T->type_id);
+            displayTwoTuple(T->ptr[1], indent + 6); //显示if子句
+            printf("%*c(ELSE子句,%s)\n", indent + 3, ' ', T->type_id);
+            displayTwoTuple(T->ptr[2], indent + 6); //显示else子句
+            break;
+        case DEF_LIST:
+            displayTwoTuple(T->ptr[0], indent); //显示该局部变量定义列表中的第一个
+            displayTwoTuple(T->ptr[1], indent); //显示其它局部变量定义
+            break;
+        case VAR_DEF:
+            printf("%*c(局部变量定义,%s)\n", indent, ' ', T->type_id);
+            displayTwoTuple(T->ptr[0], indent + 3); //显示变量类型
+            displayTwoTuple(T->ptr[1], indent + 3); //显示该定义的全部变量名
+            break;
+        case DEC_LIST:
+            printf("%*c(变量名,\n", indent, ' ');
+            T0 = T;
+            while (T0)
+            {
+                if (T0->ptr[0]->kind == ID)
+                    printf("%*c( %s\n", indent + 6, ' ', T0->ptr[0]->type_id);
+                else if (T0->ptr[0]->kind == ASSIGNOP)
+                {
+                    printf("%*c( %s 赋值为\n ", indent + 6, ' ', T0->ptr[0]->ptr[0]->type_id);
+                    displayTwoTuple(T0->ptr[0]->ptr[1], indent + strlen(T0->ptr[0]->ptr[0]->type_id) + 7); //显示初始化表达式
+                }
+                T0 = T0->ptr[1];
+            }
+            break;
+        case ID:
+            printf("%*c(ID, %s)\n", indent, ' ', T->type_id);
+            break;
+        case INT:
+            printf("%*c(INT,%d)\n", indent, ' ', T->type_int);
+            break;
+        case FLOAT:
+            printf("%*c(FLOAT,%f)\n", indent, ' ', T->type_float);
+            break;
+        case ASSIGNOP:
+        case AND:
+        case OR:
+        case RELOP:
+        case PLUS:
+        case MINUS:
+        case STAR:
+        case DIV:
+            printf("%*c(%s)\n", indent, ' ', T->type_id);
+            displayTwoTuple(T->ptr[0], indent + 3);
+            displayTwoTuple(T->ptr[1], indent + 3);
+            break;
+        case NOT:
+        case UMINUS:
+            printf("%*c(%s)\n", indent, ' ', T->type_id);
+            displayTwoTuple(T->ptr[0], indent + 3);
+            break;
+        case FUNC_CALL:
+            printf("%*c(函数调用,%s)", indent, ' ', T->type_id);
+            printf("%*c(函数名,%s)\n", indent + 3, ' ', T->type_id);
+            displayTwoTuple(T->ptr[0], indent + 3);
+            break;
+        case ARGS:
+            i = 1;
+            while (T)
+            { //ARGS表示实际参数表达式序列结点，其第一棵子树为其一个实际参数表达式，第二棵子树为剩下的
+                struct ASTNode *T0 = T->ptr[0];
+                printf("%*c(第%d个实际参数表达式,\n", indent, ' ', i++);
+                displayTwoTuple(T0, indent + 3);
+                T = T->ptr[1];
+            }
+            //                    printf("%*c(第%d个实际参数表达式,\n",indent,' ',i);
+            //                  displayTwoTuple(T,indent+3);
             printf("\n");
             break;
         }

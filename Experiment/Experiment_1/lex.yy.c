@@ -820,12 +820,12 @@ YY_RULE_SETUP
 case 3:
 YY_RULE_SETUP
 #line 26 "exp.l"
-{strcpy(yylval.type_id,  yytext);return TYPE;}
+{strcpy(yylval.type_id,  yytext); return TYPE;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 27 "exp.l"
-{strcpy(yylval.type_id,  yytext);return TYPE;}
+{strcpy(yylval.type_id,  yytext); return TYPE;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
@@ -865,7 +865,7 @@ YY_RULE_SETUP
 case 12:
 YY_RULE_SETUP
 #line 37 "exp.l"
-{strcpy(yylval.type_id, yytext);;return RELOP;}
+{strcpy(yylval.type_id, yytext); return RELOP;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP

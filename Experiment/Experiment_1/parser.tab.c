@@ -1606,7 +1606,7 @@ yyreduce:
         case 2:
 #line 51 "parser.y"
     { 
-        display((yyvsp[(1) - (1)].ptr),0); 
+        display((yyvsp[(1) - (1)].ptr),0);
         // semantic_Analysis0($1);
 ;}
     break;

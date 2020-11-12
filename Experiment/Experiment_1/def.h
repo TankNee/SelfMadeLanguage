@@ -61,9 +61,9 @@ struct symbol
     char flag;      //符号标记，函数：'F'  变量：'V'   参数：'P'  临时变量：'T'
     char offset;    //外部变量和局部变量在其静态数据区或活动记录中的偏移量，
                     //或记录函数活动记录大小，目标代码生成时使用
-    //函数入口等实验可能会用到的属性...
+                    //函数入口等实验可能会用到的属性...
 };
-//符号表
+//符号表，这个符号表是一个顺序栈
 struct symboltable
 {
     struct symbol symbols[MAXLENGTH];
