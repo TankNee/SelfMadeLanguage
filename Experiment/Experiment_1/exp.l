@@ -8,6 +8,7 @@ int yycolumn=1;
 typedef union {
 	int type_int;
 	float type_float;
+	char type_char;
 	char type_id[32];
 	struct node *ptr;
 } YYLVAL;
@@ -19,12 +20,15 @@ typedef union {
 id   [A-Za-z][A-Za-z0-9]*  
 int    [0-9]+
 float  ([0-9]*\.[0-9]+)|([0-9]+\.)
+char '.'
 %start BLOCK_COMMENT LINE_COMMENT
 %%
 <INITIAL>{int}        	{yylval.type_int=atoi(yytext); return INT;}
 <INITIAL>{float}      	{yylval.type_float=atof(yytext); return FLOAT;}
+<INITIAL>{char}      	{strcpy(yylval.type_char,  yytext); return CHAR;}
 <INITIAL>"int"        	{strcpy(yylval.type_id,  yytext); return TYPE;}
 <INITIAL>"float"      	{strcpy(yylval.type_id,  yytext); return TYPE;}
+<INITIAL>"char"      	{strcpy(yylval.type_id,  yytext); return TYPE;}
 
 <INITIAL>"return"     	{return RETURN;}
 <INITIAL>"if"         	{return IF;}

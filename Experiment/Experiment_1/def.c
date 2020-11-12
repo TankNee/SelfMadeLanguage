@@ -1,4 +1,5 @@
 #include "def.h"
+// 是否是在Debug模式;
 #define DEBUG 1
 
 char *strcat0(char *s1, char *s2)
@@ -13,7 +14,7 @@ char *newAlias()
 {
     static int no = 1;
     char s[10];
-    itoa(no++, s, 10);
+    sprintf(s, "%d", no++);
     return strcat0("v", s);
 }
 
@@ -21,7 +22,7 @@ char *newLabel()
 {
     static int no = 1;
     char s[10];
-    itoa(no++, s, 10);
+    sprintf(s, "%d", no++);
     return strcat0("label", s);
 }
 
@@ -29,7 +30,7 @@ char *newTemp()
 {
     static int no = 1;
     char s[10];
-    itoa(no++, s, 10);
+    sprintf(s, "%d", no++);
     return strcat0("temp", s);
 }
 
@@ -91,7 +92,7 @@ struct codenode *merge(int num, ...)
     return h1;
 }
 
-//输出中间代码
+// 输出中间代码
 void prnIR(struct codenode *head)
 {
     char opnstr1[32], opnstr2[32], resultstr[32];
@@ -180,7 +181,7 @@ void semantic_error(int line, char *msg1, char *msg2)
 void prn_symbol()
 { //显示符号表
     int i = 0;
-    printf("%6s %6s %6s  %6s %4s %6s\n", "变量名", "别 名", "层 号", "类  型", "标记", "偏移量");
+    printf("%6s %8s %10s %8s %4s %6s\n", "变量名", "别 名", "层 号", "类  型", "标 记", "偏移量");
     for (i = 0; i < symbolTable.index; i++)
         printf("%6s %6s %6d  %6s %4c %6d\n", symbolTable.symbols[i].name,
                symbolTable.symbols[i].alias, symbolTable.symbols[i].level,
@@ -202,6 +203,7 @@ int searchSymbolTable(char *name)
     }
     return -1;
 }
+// 将标识填入符号表中，如果这个符号已经存在那么这个函数就返回-1，否则返回符号在符号表中的位置符号，中间代码生成时可用序号取到符号别名
 int fillSymbolTable(char *name, char *alias, int level, int type, char flag, int offset)
 {
     //首先根据name查符号表，不能重复定义 重复定义返回-1
@@ -373,9 +375,9 @@ void boolExp(struct ASTNode *T)
         }
     }
 }
-
+// 处理基本表达式，参考文献[2]p82的思想
 void Exp(struct ASTNode *T)
-{ //处理基本表达式，参考文献[2]p82的思想
+{
     int rtn, num, width;
     struct ASTNode *T0;
     struct opn opn1, opn2, result;
@@ -546,7 +548,7 @@ void Exp(struct ASTNode *T)
         }
     }
 }
-
+// 语义分析
 void semantic_Analysis(struct ASTNode *T)
 { //对抽象语法树的先根遍历,按display的控制结构修改完成符号表管理和语义检查和TAC生成（语句部分）
     int rtn, num, width;
@@ -872,5 +874,5 @@ void semantic_Analysis0(struct ASTNode *T)
     T->offset = 0; //外部变量在数据区的偏移量
     semantic_Analysis(T);
     prnIR(T->code);
-    objectCode(T->code);
+    // objectCode(T->code);
 }
