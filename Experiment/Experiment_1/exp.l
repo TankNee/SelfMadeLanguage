@@ -20,12 +20,13 @@ typedef union {
 id   [A-Za-z][A-Za-z0-9]*  
 int    [0-9]+
 float  ([0-9]*\.[0-9]+)|([0-9]+\.)
-char '.'
+char \'([^\']?)\'
 %start BLOCK_COMMENT LINE_COMMENT
 %%
 <INITIAL>{int}        	{yylval.type_int=atoi(yytext); return INT;}
 <INITIAL>{float}      	{yylval.type_float=atof(yytext); return FLOAT;}
-<INITIAL>{char}      	{strcpy(yylval.type_char,  yytext); return CHAR;}
+<INITIAL>{char}      	{strcpy(&yylval.type_char,  yytext); return CHAR;}
+
 <INITIAL>"int"        	{strcpy(yylval.type_id,  yytext); return TYPE;}
 <INITIAL>"float"      	{strcpy(yylval.type_id,  yytext); return TYPE;}
 <INITIAL>"char"      	{strcpy(yylval.type_id,  yytext); return TYPE;}

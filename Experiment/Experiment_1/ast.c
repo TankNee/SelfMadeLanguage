@@ -148,6 +148,10 @@ void display(struct ASTNode *T, int indent)
             printf("%*cFLOAT：%f\n", indent, ' ', T->type_float);
             printf("%*c二元式为：(FLOAT,%f)\n", indent, ' ', T->type_float);
             break;
+        case CHAR:
+            printf("%*cCHAR：%c\n", indent, ' ', T->type_char);
+            printf("%*c二元式为：(CHAR,%c)\n", indent, ' ', T->type_char);
+            break;
         case ASSIGNOP:
         case AND:
         case OR:
