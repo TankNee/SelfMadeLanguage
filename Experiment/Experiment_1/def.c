@@ -176,7 +176,7 @@ void prnIR(struct codenode *head)
 void semantic_error(int line, char *msg1, char *msg2)
 {
     //这里可以只收集错误信息，最后一次显示
-    printf(FONT_COLOR_RED"Grammar Error: %s %s in Line %d\n"COLOR_NONE, msg1, msg2, line);
+    printf(FONT_COLOR_RED "Grammar Error: %s %s in Line %d\n" COLOR_NONE, msg1, msg2, line);
 }
 void prn_symbol()
 { //显示符号表
@@ -717,7 +717,7 @@ void semantic_Analysis(struct ASTNode *T)
             T->width = 0;
             width = T->ptr[1]->type == INT ? 4 : T->type == FLOAT ? 8 : 1; //一个变量宽度
             while (T0)
-            { //处理所以DEC_LIST结点
+            { // 处理所以DEC_LIST结点
                 num++;
                 T0->ptr[0]->type = T0->type; //类型属性向下传递
                 if (T0->ptr[1])
@@ -751,6 +751,10 @@ void semantic_Analysis(struct ASTNode *T)
                         T->code = merge(3, T->code, T0->ptr[0]->ptr[1]->code, genIR(ASSIGNOP, opn1, opn2, result));
                     }
                     T->width += width + T0->ptr[0]->ptr[1]->width;
+                }
+                else if (T0->ptr[0]->kind == ARRAY_DEF)
+                {
+                    printf("ARRAY_DEF DETECTED \n");
                 }
                 T0 = T0->ptr[1];
             }

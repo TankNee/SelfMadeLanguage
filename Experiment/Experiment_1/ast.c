@@ -137,20 +137,18 @@ void display(struct ASTNode *T, int indent)
                 {
                     // 这里的语句strlen(T1->ptr[0]->ptr[0]->type_id) == 1代表数组定义节点T0->ptr[0]的类型还不确定，还需要继续从它的子树中查询类型
                     struct ASTNode *T1 = T0;
-                    while (strlen(T1->ptr[0]->ptr[0]->type_id) == 1)
+                    while (T1->ptr[0]->ptr[0]->ptr[0])
                     {
-                        // TODO 还有点问题
-                        printf(FONT_COLOR_RED"id: %d %lu , length: %lu \n"COLOR_NONE,T1->ptr[0]->ptr[0]->type_id[0], strlen(&T1->ptr[0]->ptr[0]->type_id[0]), strlen(T1->ptr[0]->ptr[0]->type_id));
                         T1 = T1->ptr[0];
                     }
-                    printf("%*c将 %s 初始化成%d", indent + 6, ' ', T1->ptr[0]->ptr[0]->type_id, T0->ptr[0]->type_int);
+                    printf("%*c将 %s 初始化成 %d", indent + 6, ' ', T1->ptr[0]->ptr[0]->type_id, T0->ptr[0]->type_int);
                     T1 = T0;
-                    while (strlen(T1->ptr[0]->ptr[0]->type_id) == 1)
+                    while (T1->ptr[0]->ptr[0]->ptr[0])
                     {
                         T1 = T1->ptr[0];
                         printf("x%d", T1->ptr[0]->type_int);
                     }
-                    printf("的数组\n");
+                    printf(" 的数组\n");
                     display(T0->ptr[0]->ptr[1], indent + strlen(T0->ptr[0]->ptr[0]->type_id) + 7); //显示初始化表达式
                 }
                 T0 = T0->ptr[1];
