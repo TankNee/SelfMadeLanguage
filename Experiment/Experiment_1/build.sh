@@ -1,3 +1,3 @@
 flex exp.l
-bison -d parser.y
+bison -d -v parser.y
 cc -o parser lex.yy.c parser.tab.c ast.c def.c

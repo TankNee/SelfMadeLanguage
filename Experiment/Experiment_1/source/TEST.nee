@@ -1,0 +1,7 @@
+int main(int argc)
+{
+    float bs;
+    int a[1][3];
+    a[0][1] = 4;
+    return 0;
+}

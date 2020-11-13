@@ -133,24 +133,40 @@ void display(struct ASTNode *T, int indent)
                     printf("%*c将 %s 赋值为\n ", indent + 6, ' ', T0->ptr[0]->ptr[0]->type_id);
                     display(T0->ptr[0]->ptr[1], indent + strlen(T0->ptr[0]->ptr[0]->type_id) + 7); //显示初始化表达式
                 }
+                else if (T0->ptr[0]->kind == ARRAY_DEF)
+                {
+                    // 这里的语句strlen(T1->ptr[0]->ptr[0]->type_id) == 1代表数组定义节点T0->ptr[0]的类型还不确定，还需要继续从它的子树中查询类型
+                    struct ASTNode *T1 = T0;
+                    while (strlen(T1->ptr[0]->ptr[0]->type_id) == 1)
+                    {
+                        // TODO 还有点问题
+                        printf(FONT_COLOR_RED"id: %d %lu , length: %lu \n"COLOR_NONE,T1->ptr[0]->ptr[0]->type_id[0], strlen(&T1->ptr[0]->ptr[0]->type_id[0]), strlen(T1->ptr[0]->ptr[0]->type_id));
+                        T1 = T1->ptr[0];
+                    }
+                    printf("%*c将 %s 初始化成%d", indent + 6, ' ', T1->ptr[0]->ptr[0]->type_id, T0->ptr[0]->type_int);
+                    T1 = T0;
+                    while (strlen(T1->ptr[0]->ptr[0]->type_id) == 1)
+                    {
+                        T1 = T1->ptr[0];
+                        printf("x%d", T1->ptr[0]->type_int);
+                    }
+                    printf("的数组\n");
+                    display(T0->ptr[0]->ptr[1], indent + strlen(T0->ptr[0]->ptr[0]->type_id) + 7); //显示初始化表达式
+                }
                 T0 = T0->ptr[1];
             }
             break;
         case ID:
             printf("%*cID： %s\n", indent, ' ', T->type_id);
-            printf("%*c二元式为：(ID,%s)\n", indent, ' ', T->type_id);
             break;
         case INT:
             printf("%*cINT：%d\n", indent, ' ', T->type_int);
-            printf("%*c二元式为：(INT,%d)\n", indent, ' ', T->type_int);
             break;
         case FLOAT:
             printf("%*cFLOAT：%f\n", indent, ' ', T->type_float);
-            printf("%*c二元式为：(FLOAT,%f)\n", indent, ' ', T->type_float);
             break;
         case CHAR:
             printf("%*cCHAR：%c\n", indent, ' ', T->type_char);
-            printf("%*c二元式为：(CHAR,%c)\n", indent, ' ', T->type_char);
             break;
         case ASSIGNOP:
         case AND:
@@ -173,6 +189,10 @@ void display(struct ASTNode *T, int indent)
             printf("%*c函数调用：(%d)\n", indent, ' ', T->pos);
             printf("%*c函数名：%s\n", indent + 3, ' ', T->type_id);
             display(T->ptr[0], indent + 3);
+            break;
+        case ARRAY_CALL:
+            display(T->ptr[0], indent);
+            display(T->ptr[1], indent + 3);
             break;
         case ARGS:
             i = 1;

@@ -176,12 +176,12 @@ void prnIR(struct codenode *head)
 void semantic_error(int line, char *msg1, char *msg2)
 {
     //这里可以只收集错误信息，最后一次显示
-    printf("在%d行,%s %s\n", line, msg1, msg2);
+    printf(FONT_COLOR_RED"Grammar Error: %s %s in Line %d\n"COLOR_NONE, msg1, msg2, line);
 }
 void prn_symbol()
 { //显示符号表
     int i = 0;
-    printf("%6s %8s %10s %8s %4s %6s\n", "变量名", "别 名", "层 号", "类  型", "标 记", "偏移量");
+    printf("\n%6s %8s %10s %8s %4s %6s\n", "符号名", "别 名", "层 号", "类  型", "标 记", "偏移量");
     for (i = 0; i < symbolTable.index; i++)
         printf("%6s %6s %6d  %6s %4c %6d\n", symbolTable.symbols[i].name,
                symbolTable.symbols[i].alias, symbolTable.symbols[i].level,
@@ -426,12 +426,15 @@ void Exp(struct ASTNode *T)
             T->place = fill_Temp(newTemp(), LEV, T->type, 'T', T->offset); //为单字符生成一个临时变量
             T->type = CHAR;
             opn1.kind = CHAR;
-            opn1.const_float = T->type_char;
+            opn1.const_char = T->type_char;
             result.kind = ID;
             strcpy(result.id, symbolTable.symbols[T->place].alias);
             result.offset = symbolTable.symbols[T->place].offset;
             T->code = genIR(ASSIGNOP, opn1, opn2, result);
             T->width = 1;
+            break;
+        case ARRAY_DEF:
+            printf("ARRAY_DEF");
             break;
         case ASSIGNOP:
             if (T->ptr[0]->kind != ID)
@@ -584,11 +587,11 @@ void semantic_Analysis(struct ASTNode *T)
             break;
         case EXT_VAR_DEF: //处理外部说明,将第一个孩子(TYPE结点)中的类型送到第二个孩子的类型域
             T->type = T->ptr[1]->type = !strcmp(T->ptr[0]->type_id, "int") ? INT : !strcmp(T->ptr[0]->type_id, "float") ? FLOAT : CHAR;
-            T->ptr[1]->offset = T->offset;                        //这个外部变量的偏移量向下传递
+            T->ptr[1]->offset = T->offset;                                               //这个外部变量的偏移量向下传递
             T->ptr[1]->width = T->type == INT ? 4 : T->type == FLOAT ? 8 : 1;            //将一个变量的宽度向下传递
-            ext_var_list(T->ptr[1]);                              //处理外部变量说明中的标识符序列
+            ext_var_list(T->ptr[1]);                                                     //处理外部变量说明中的标识符序列
             T->width = (T->type == INT ? 4 : T->type == FLOAT ? 8 : 1) * T->ptr[1]->num; //计算这个外部变量说明的宽度
-            T->code = NULL;                                       //这里假定外部变量不支持初始化
+            T->code = NULL;                                                              //这里假定外部变量不支持初始化
             break;
         case FUNC_DEF:                                                          //填写函数定义信息到符号表
             T->ptr[1]->type = !strcmp(T->ptr[0]->type_id, "int") ? INT : FLOAT; //获取函数返回类型送到含函数名、参数的结点
@@ -652,7 +655,7 @@ void semantic_Analysis(struct ASTNode *T)
                 semantic_error(T->ptr[1]->pos, T->ptr[1]->type_id, "参数名重复定义");
             else
                 T->ptr[1]->place = rtn;
-            T->num = 1;                                //参数个数计算的初始值
+            T->num = 1;                                                       //参数个数计算的初始值
             T->width = T->ptr[0]->type == INT ? 4 : T->type == FLOAT ? 8 : 1; //参数宽度
             result.kind = ID;
             strcpy(result.id, symbolTable.symbols[rtn].alias);
@@ -707,8 +710,8 @@ void semantic_Analysis(struct ASTNode *T)
         case VAR_DEF: //处理一个局部变量定义,将第一个孩子(TYPE结点)中的类型送到第二个孩子的类型域
                       //类似于上面的外部变量EXT_VAR_DEF，换了一种处理方法
             T->code = NULL;
-            T->ptr[1]->type = !strcmp(T->ptr[0]->type_id, "int") ? INT : !strcmp(T->ptr[0]->type_id, "float") ? FLOAT : CHAR; //确定变量序列各变量类型
-            T0 = T->ptr[1];                                                                                                   //T0为变量名列表子树根指针，对ID、ASSIGNOP类结点在登记到符号表，作为局部变量
+            T->ptr[1]->type = !strcmp(T->ptr[0]->type_id, "int") ? INT : !strcmp(T->ptr[0]->type_id, "float") ? FLOAT : CHAR; // 确定变量序列各变量类型
+            T0 = T->ptr[1];                                                                                                   // T0为变量名列表子树根指针，对ID、ASSIGNOP类结点在登记到符号表，作为局部变量
             num = 0;
             T0->offset = T->offset;
             T->width = 0;
@@ -855,6 +858,7 @@ void semantic_Analysis(struct ASTNode *T)
         case ID:
         case INT:
         case FLOAT:
+        case ARRAY_DEF:
         case ASSIGNOP:
         case AND:
         case OR:

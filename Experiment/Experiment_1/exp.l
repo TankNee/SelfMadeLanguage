@@ -17,15 +17,13 @@ typedef union {
 %}
 %option yylineno
 
-id   [A-Za-z][A-Za-z0-9]*  
-int    [0-9]+
-float  ([0-9]*\.[0-9]+)|([0-9]+\.)
-char \'([^\']?)\'
-%start BLOCK_COMMENT LINE_COMMENT
+id   	[A-Za-z][A-Za-z0-9]*  
+int    	[0-9]+
+float  	([0-9]*\.[0-9]+)|([0-9]+\.)
+%start BLOCK_COMMENT LINE_COMMENT CHAR_LITERAL
 %%
 <INITIAL>{int}        	{yylval.type_int=atoi(yytext); return INT;}
 <INITIAL>{float}      	{yylval.type_float=atof(yytext); return FLOAT;}
-<INITIAL>{char}      	{strcpy(&yylval.type_char,  yytext); return CHAR;}
 
 <INITIAL>"int"        	{strcpy(yylval.type_id,  yytext); return TYPE;}
 <INITIAL>"float"      	{strcpy(yylval.type_id,  yytext); return TYPE;}
@@ -35,8 +33,11 @@ char \'([^\']?)\'
 <INITIAL>"if"         	{return IF;}
 <INITIAL>"else"       	{return ELSE;}
 <INITIAL>"while"      	{return WHILE;}
+<INITIAL>"break"        {return BREAK;}
+<INITIAL>"continue"     {return CONTINUE;}
 
 <INITIAL>{id}       	{strcpy(yylval.type_id,  yytext); return ID;}
+
 <INITIAL>";"			{return SEMI;}
 <INITIAL>","			{return COMMA;}
 <INITIAL>">"|"<"|">="|"<="|"=="|"!=" {strcpy(yylval.type_id, yytext); return RELOP;}
@@ -52,21 +53,33 @@ char \'([^\']?)\'
 <INITIAL>")"			{return RP;}
 <INITIAL>"{"			{return LC;}
 <INITIAL>"}"			{return RC;}
+<INITIAL>"["            {return LB;}
+<INITIAL>"]"            {return RB;}
+
 <INITIAL>"/*"     		BEGIN BLOCK_COMMENT;
 <INITIAL>"//"     		BEGIN LINE_COMMENT;
 <BLOCK_COMMENT>\n		{yycolumn=1;}
 <BLOCK_COMMENT>"*/"		{BEGIN INITIAL;}
-<BLOCK_COMMENT><<EOF>> 	{printf("Error type B :Wrong Usage of Block Comment \"%s\"\n\t at Line %d\n",yytext,yylineno); return 1;}
+<BLOCK_COMMENT><<EOF>> 	{printf(FONT_COLOR_RED"Error type B :Wrong Usage of Block Comment \"%s\"\t at Line %d\n"COLOR_NONE,yytext,yylineno);}
 <BLOCK_COMMENT>.      	{}
-<LINE_COMMENT>\n  {
+<LINE_COMMENT>\n  		{
     yycolumn=1;
     BEGIN INITIAL;
 }
 <LINE_COMMENT><<EOF>>   BEGIN INITIAL;
 <LINE_COMMENT>.   		{}
+
+<INITIAL>\' 			{BEGIN CHAR_LITERAL;}
+<CHAR_LITERAL>\'		{BEGIN INITIAL;}
+<CHAR_LITERAL>.			{
+	yylval.type_char=*yytext;
+	return CHAR;
+}
+<CHAR_LITERAL>[^']?	{printf(FONT_COLOR_RED"Error type B :Wrong Usage of Single Quote \"%s\"\t at Line %d\n"COLOR_NONE,yytext,yylineno);}
+
 <INITIAL>[\n]        	{yycolumn=1;}   
 <INITIAL>[ \r\t]     	{}   
-<INITIAL>.				{printf("Error type A :Mysterious character \"%s\"\n\t at Line %d\n",yytext,yylineno);}
+<INITIAL>.				{printf(FONT_COLOR_RED"Error type A :Mysterious character \"%s\"\t at Line %d\n"COLOR_NONE,yytext,yylineno);}
 %%
 
 /* 和bison联用时，不需要这部分

@@ -5,6 +5,15 @@
 #include "parser.tab.h"
 #define MAXLENGTH 200
 #define DX 3 * sizeof(int) /*活动记录控制信息需要的单元数，这个根据实际系统调整*/
+/* 字符颜色的宏定义 */
+#define    COLOR_NONE			"\033[0m"
+#define    FONT_COLOR_RED		"\033[0;31m"
+#define    FONT_COLOR_BLUE		"\033[1;34m"
+
+#define    BACKGROUND_COLOR_RED	"\033[41m"    
+
+#define    BG_RED_FONT_YELLOW	"\033[41;33m"
+
 //以下语法树结点类型、三地址结点类型等定义仅供参考，实验时一定要根据自己的理解来定义
 int LEV; //层号
 struct opn
@@ -35,10 +44,10 @@ struct ASTNode
     int kind;
     union
     {
-        char type_id[33]; // 由标识符生成的叶结点
-        int type_int;     // 由整常数生成的叶结点
-        float type_float; // 由浮点常数生成的叶结点
-        char type_char; // 由单字符生成的叶节点
+        char type_id[33];       // 由标识符生成的叶结点
+        int type_int;           // 由整常数生成的叶结点
+        float type_float;       // 由浮点常数生成的叶结点
+        char type_char;         // 由单字符生成的叶节点
     };
     struct ASTNode *ptr[4];     //由kind确定有多少棵子树
     int place;                  //存放（临时）变量在符号表的位置序号
