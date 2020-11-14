@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.nee": "c",
+        "*.output": "plaintext",
+        "random": "c"
+    }
+}

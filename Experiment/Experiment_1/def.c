@@ -181,12 +181,15 @@ void semantic_error(int line, char *msg1, char *msg2)
 void prn_symbol()
 { //显示符号表
     int i = 0;
-    printf("\n%6s %8s %10s %8s %4s %6s\n", "符号名", "别 名", "层 号", "类  型", "标 记", "偏移量");
+    printf("\n%s \t\t%s \t\t%s \t\t%s \t\t%s \t\t%s\n", "符号名", "别 名", "层 号", "类  型", "标 记", "偏移量");
     for (i = 0; i < symbolTable.index; i++)
-        printf("%6s %6s %6d  %6s %4c %6d\n", symbolTable.symbols[i].name,
+    {
+
+        printf("%s \t\t%s \t\t%d  \t\t%s \t\t%c \t\t%d\n", symbolTable.symbols[i].name,
                symbolTable.symbols[i].alias, symbolTable.symbols[i].level,
-               symbolTable.symbols[i].type == INT ? "int" : symbolTable.symbols[i].type == FLOAT ? "float" : "char",
+               strcat0(symbolTable.symbols[i].type == INT ? "int" : symbolTable.symbols[i].type == FLOAT ? "float" : "char", symbolTable.symbols[i].array ? "[.]" : ""),
                symbolTable.symbols[i].flag, symbolTable.symbols[i].offset);
+    }
 }
 
 int searchSymbolTable(char *name)
@@ -224,6 +227,7 @@ int fillSymbolTable(char *name, char *alias, int level, int type, char flag, int
     symbolTable.symbols[symbolTable.index].type = type;
     symbolTable.symbols[symbolTable.index].flag = flag;
     symbolTable.symbols[symbolTable.index].offset = offset;
+    symbolTable.symbols[symbolTable.index].array = 0;
     return symbolTable.index++; //返回的是符号在符号表中的位置序号，中间代码生成时可用序号取到符号别名
 }
 
@@ -420,7 +424,7 @@ void Exp(struct ASTNode *T)
             strcpy(result.id, symbolTable.symbols[T->place].alias);
             result.offset = symbolTable.symbols[T->place].offset;
             T->code = genIR(ASSIGNOP, opn1, opn2, result);
-            T->width = 4;
+            T->width = 8;
             break;
         case CHAR:
             T->place = fill_Temp(newTemp(), LEV, T->type, 'T', T->offset); //为单字符生成一个临时变量
@@ -433,11 +437,8 @@ void Exp(struct ASTNode *T)
             T->code = genIR(ASSIGNOP, opn1, opn2, result);
             T->width = 1;
             break;
-        case ARRAY_DEF:
-            printf("ARRAY_DEF");
-            break;
         case ASSIGNOP:
-            if (T->ptr[0]->kind != ID)
+            if (T->ptr[0]->kind != ID && T->ptr[0]->kind != ARRAY_CALL)
             {
                 semantic_error(T->pos, "", "赋值语句需要左值");
             }
@@ -500,6 +501,24 @@ void Exp(struct ASTNode *T)
             break;
         case UMINUS: //未写完整
             break;
+        case ARRAY_CALL:
+            T0 = T;
+            while (T0->ptr[0])
+            {
+                T0 = T0->ptr[0];
+            }
+            rtn = searchSymbolTable(T0->type_id);
+            if (rtn == -1)
+            {
+                semantic_error(T->pos, T0->type_id, "数组未定义");
+                break;
+            }
+            if (!symbolTable.symbols[rtn].array)
+            {
+                semantic_error(T->pos, T0->type_id, "不是一个数组");
+                break;
+            }
+            break;
         case FUNC_CALL: //根据T->type_id查出函数的定义，如果语言中增加了实验教材的read，write需要单独处理一下
             rtn = searchSymbolTable(T->type_id);
             if (rtn == -1)
@@ -513,7 +532,7 @@ void Exp(struct ASTNode *T)
                 break;
             }
             T->type = symbolTable.symbols[rtn].type;
-            width = T->type == INT ? 4 : 8; //存放函数返回值的单数字节数
+            width = T->type == INT ? 4 : T->type == FLOAT ? 8 : 1; //存放函数返回值的单数字节数
             if (T->ptr[0])
             {
                 T->ptr[0]->offset = T->offset;
@@ -717,7 +736,7 @@ void semantic_Analysis(struct ASTNode *T)
             T->width = 0;
             width = T->ptr[1]->type == INT ? 4 : T->type == FLOAT ? 8 : 1; //一个变量宽度
             while (T0)
-            { // 处理所以DEC_LIST结点
+            { // 处理所有DEC_LIST结点
                 num++;
                 T0->ptr[0]->type = T0->type; //类型属性向下传递
                 if (T0->ptr[1])
@@ -754,7 +773,21 @@ void semantic_Analysis(struct ASTNode *T)
                 }
                 else if (T0->ptr[0]->kind == ARRAY_DEF)
                 {
-                    printf("ARRAY_DEF DETECTED \n");
+
+                    struct ASTNode *T1 = T0;
+                    int length = 1;
+                    while (T1->ptr[0]->ptr[0])
+                    {
+                        length *= T1->ptr[0]->type_int;
+                        T1 = T1->ptr[0];
+                    }
+                    rtn = fillSymbolTable(T1->ptr[0]->type_id, newAlias(), LEV, T0->ptr[0]->type, 'V', T->offset + T->width);
+                    if (rtn == -1)
+                        semantic_error(T0->ptr[0]->pos, T0->ptr[0]->type_id, "变量重复定义");
+                    else
+                        T0->ptr[0]->place = rtn;
+                    symbolTable.symbols[symbolTable.index - 1].array = 1;
+                    T->width += width * length;
                 }
                 T0 = T0->ptr[1];
             }
@@ -862,7 +895,7 @@ void semantic_Analysis(struct ASTNode *T)
         case ID:
         case INT:
         case FLOAT:
-        case ARRAY_DEF:
+        case ARRAY_CALL:
         case ASSIGNOP:
         case AND:
         case OR:

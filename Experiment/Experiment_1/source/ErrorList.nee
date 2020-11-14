@@ -29,7 +29,7 @@ int main()
     // func(iv, tv);
 
     // Error 8 对非数组变量采用下标变量的形式访问；
-    // TODO: 将数组变量加入到符号表中
+    // iv[3];
 
     // TODO: Error 9 赋值号左边不是左值表达式
     // int is[3] = 3;
