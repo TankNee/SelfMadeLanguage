@@ -73,39 +73,41 @@
      DEFAULT = 289,
      BREAK = 290,
      CONTINUE = 291,
-     EXT_DEF_LIST = 292,
-     EXT_VAR_DEF = 293,
-     FUNC_DEF = 294,
-     ARRAY_DEF = 295,
-     ARRAY_CALL = 296,
-     FUNC_DEC = 297,
-     EXT_DEC_LIST = 298,
-     PARAM_LIST = 299,
-     PARAM_DEC = 300,
-     VAR_DEF = 301,
-     DEC_LIST = 302,
-     DEF_LIST = 303,
-     COMP_STM = 304,
-     STM_LIST = 305,
-     EXP_STMT = 306,
-     IF_THEN = 307,
-     IF_THEN_ELSE = 308,
-     FUNC_CALL = 309,
-     ARGS = 310,
-     FUNCTION = 311,
-     PARAM = 312,
-     ARG = 313,
-     CALL = 314,
-     LABEL = 315,
-     GOTO = 316,
-     JLT = 317,
-     JLE = 318,
-     JGT = 319,
-     JGE = 320,
-     EQ = 321,
-     NEQ = 322,
-     UMINUS = 323,
-     LOWER_THEN_ELSE = 324
+     INCREMENT = 292,
+     DECREMENT = 293,
+     EXT_DEF_LIST = 294,
+     EXT_VAR_DEF = 295,
+     FUNC_DEF = 296,
+     ARRAY_DEF = 297,
+     ARRAY_CALL = 298,
+     FUNC_DEC = 299,
+     EXT_DEC_LIST = 300,
+     PARAM_LIST = 301,
+     PARAM_DEC = 302,
+     VAR_DEF = 303,
+     DEC_LIST = 304,
+     DEF_LIST = 305,
+     COMP_STM = 306,
+     STM_LIST = 307,
+     EXP_STMT = 308,
+     IF_THEN = 309,
+     IF_THEN_ELSE = 310,
+     FUNC_CALL = 311,
+     ARGS = 312,
+     FUNCTION = 313,
+     PARAM = 314,
+     ARG = 315,
+     CALL = 316,
+     LABEL = 317,
+     GOTO = 318,
+     JLT = 319,
+     JLE = 320,
+     JGT = 321,
+     JGE = 322,
+     EQ = 323,
+     NEQ = 324,
+     UMINUS = 325,
+     LOWER_THEN_ELSE = 326
    };
 #endif
 /* Tokens.  */
@@ -143,39 +145,41 @@
 #define DEFAULT 289
 #define BREAK 290
 #define CONTINUE 291
-#define EXT_DEF_LIST 292
-#define EXT_VAR_DEF 293
-#define FUNC_DEF 294
-#define ARRAY_DEF 295
-#define ARRAY_CALL 296
-#define FUNC_DEC 297
-#define EXT_DEC_LIST 298
-#define PARAM_LIST 299
-#define PARAM_DEC 300
-#define VAR_DEF 301
-#define DEC_LIST 302
-#define DEF_LIST 303
-#define COMP_STM 304
-#define STM_LIST 305
-#define EXP_STMT 306
-#define IF_THEN 307
-#define IF_THEN_ELSE 308
-#define FUNC_CALL 309
-#define ARGS 310
-#define FUNCTION 311
-#define PARAM 312
-#define ARG 313
-#define CALL 314
-#define LABEL 315
-#define GOTO 316
-#define JLT 317
-#define JLE 318
-#define JGT 319
-#define JGE 320
-#define EQ 321
-#define NEQ 322
-#define UMINUS 323
-#define LOWER_THEN_ELSE 324
+#define INCREMENT 292
+#define DECREMENT 293
+#define EXT_DEF_LIST 294
+#define EXT_VAR_DEF 295
+#define FUNC_DEF 296
+#define ARRAY_DEF 297
+#define ARRAY_CALL 298
+#define FUNC_DEC 299
+#define EXT_DEC_LIST 300
+#define PARAM_LIST 301
+#define PARAM_DEC 302
+#define VAR_DEF 303
+#define DEC_LIST 304
+#define DEF_LIST 305
+#define COMP_STM 306
+#define STM_LIST 307
+#define EXP_STMT 308
+#define IF_THEN 309
+#define IF_THEN_ELSE 310
+#define FUNC_CALL 311
+#define ARGS 312
+#define FUNCTION 313
+#define PARAM 314
+#define ARG 315
+#define CALL 316
+#define LABEL 317
+#define GOTO 318
+#define JLT 319
+#define JLE 320
+#define JGT 321
+#define JGE 322
+#define EQ 323
+#define NEQ 324
+#define UMINUS 325
+#define LOWER_THEN_ELSE 326
 
 
 
@@ -191,7 +195,7 @@ typedef union YYSTYPE
 	struct ASTNode *ptr;
 }
 /* Line 1529 of yacc.c.  */
-#line 195 "parser.tab.h"
+#line 199 "parser.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

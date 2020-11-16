@@ -55,6 +55,8 @@ float  	([0-9]*\.[0-9]+)|([0-9]+\.)
 <INITIAL>"}"			{return RC;}
 <INITIAL>"["            {return LB;}
 <INITIAL>"]"            {return RB;}
+<INITIAL>"++"           {return INCREMENT;}
+<INITIAL>"--"           {return DECREMENT;}
 
 <INITIAL>"/*"     		BEGIN BLOCK_COMMENT;
 <INITIAL>"//"     		BEGIN LINE_COMMENT;

@@ -31,7 +31,7 @@ int yylex();
 %token <type_char> CHAR            /*指定INT的语义值是type_char，由词法分析得到的数值*/
 /* LP RP 为小括号()   LC RC 为大括号{}   LB RB为方括号[]  */
 %token DPLUS LP RP LC RC LB RB SEMI COMMA      /*用bison对该文件编译时，带参数-d，生成的.tab.h中给这些单词进行编码，可在lex.l中包含parser.tab.h使用这些单词种类码*/
-%token PLUS MINUS STAR DIV ASSIGNOP AND OR NOT IF ELSE WHILE RETURN FOR SWITCH CASE COLON DEFAULT BREAK CONTINUE
+%token PLUS MINUS STAR DIV ASSIGNOP AND OR NOT IF ELSE WHILE RETURN FOR SWITCH CASE COLON DEFAULT BREAK CONTINUE INCREMENT DECREMENT
 /*以下为接在上述token后依次编码的枚举常量，作为AST结点类型标记*/
 %token EXT_DEF_LIST EXT_VAR_DEF FUNC_DEF ARRAY_DEF ARRAY_CALL FUNC_DEC EXT_DEC_LIST PARAM_LIST PARAM_DEC VAR_DEF DEC_LIST DEF_LIST COMP_STM STM_LIST EXP_STMT IF_THEN IF_THEN_ELSE
 %token FUNC_CALL ARGS FUNCTION PARAM ARG CALL LABEL GOTO JLT JLE JGT JGE EQ NEQ
@@ -71,7 +71,7 @@ ExtDecList:  VarDec      {$$=$1;}       /*每一个EXT_DECLIST的结点，其第
 VarDec: ID                      {$$=mknode(0,ID,yylineno);strcpy($$->type_id,$1);}              // ID结点，标识符符号串存放结点的type_id
         | VarDec LB INT RB      {$$=mknode(1,ARRAY_DEF,yylineno,$1);$$->type_int=$3;}           // 定义数组，由于要支持多维数组，所以使用递归定义。同时将数组的变量名存在typ_id上,同时直接用type_int这个属性来存放数组的长度  
         ;
-FuncDec:  ID LP VarList RP      {$$=mknode(1,FUNC_DEC,yylineno,$3);strcpy($$->type_id,$1);}     //函数名存放在$$->type_id
+FuncDec:  ID LP VarList RP      {$$=mknode(1,FUNC_DEC,yylineno,$3);strcpy($$->type_id,$1);}     //函数名存放在$$->type_id, 函数声明
 	| ID LP RP              {$$=mknode(0,FUNC_DEC,yylineno);strcpy($$->type_id,$1);$$->ptr[0]=NULL;}        //函数名存放在$$->type_id
 
         ;  

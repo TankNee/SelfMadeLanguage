@@ -33,6 +33,22 @@ char *newTemp()
     sprintf(s, "%d", no++);
     return strcat0("temp", s);
 }
+// 判断是否有return语句
+int checkReturnStmt(struct ASTNode *compStNode)
+{
+    // 转到语句部分
+    compStNode = compStNode->ptr[1];
+    int flag = 0;
+    while (compStNode)
+    {
+        if (compStNode->ptr[0]->kind == RETURN)
+        {
+            flag = 1;
+        }
+        compStNode = compStNode->ptr[1];
+    }
+    return flag;
+}
 
 //生成一条TAC代码的结点组成的双向循环链表，返回头指针
 struct codenode *genIR(int op, struct opn opn1, struct opn opn2, struct opn result)
@@ -181,6 +197,7 @@ void semantic_error(int line, char *msg1, char *msg2)
 void prn_symbol()
 { //显示符号表
     int i = 0;
+    printf("==============================符号表===================================");
     printf("\n%s \t\t%s \t\t%s \t\t%s \t\t%s \t\t%s\n", "符号名", "别 名", "层 号", "类  型", "标 记", "偏移量");
     for (i = 0; i < symbolTable.index; i++)
     {
@@ -440,7 +457,7 @@ void Exp(struct ASTNode *T)
         case ASSIGNOP:
             if (T->ptr[0]->kind != ID && T->ptr[0]->kind != ARRAY_CALL)
             {
-                semantic_error(T->pos, "", "赋值语句需要左值");
+                semantic_error(T->pos, "", "赋值语句左侧不是左值表达式");
             }
             else
             {
@@ -612,18 +629,24 @@ void semantic_Analysis(struct ASTNode *T)
             T->width = (T->type == INT ? 4 : T->type == FLOAT ? 8 : 1) * T->ptr[1]->num; //计算这个外部变量说明的宽度
             T->code = NULL;                                                              //这里假定外部变量不支持初始化
             break;
-        case FUNC_DEF:                                                          //填写函数定义信息到符号表
-            T->ptr[1]->type = !strcmp(T->ptr[0]->type_id, "int") ? INT : FLOAT; //获取函数返回类型送到含函数名、参数的结点
-            T->width = 0;                                                       //函数的宽度设置为0，不会对外部变量的地址分配产生影响
-            T->offset = DX;                                                     //设置局部变量在活动记录中的偏移量初值
-            semantic_Analysis(T->ptr[1]);                                       //处理函数名和参数结点部分，这里不考虑用寄存器传递参数
-            T->offset += T->ptr[1]->width;                                      //用形参单元宽度修改函数局部变量的起始偏移量
+        case FUNC_DEF:                                                                                                        //填写函数定义信息到符号表
+            T->ptr[1]->type = !strcmp(T->ptr[0]->type_id, "int") ? INT : !strcmp(T->ptr[0]->type_id, "float") ? FLOAT : CHAR; //获取函数返回类型送到含函数名、参数的结点
+            T->width = 0;                                                                                                     //函数的宽度设置为0，不会对外部变量的地址分配产生影响
+            T->offset = DX;                                                                                                   //设置局部变量在活动记录中的偏移量初值
+            semantic_Analysis(T->ptr[1]);                                                                                     //处理函数名和参数结点部分，这里不考虑用寄存器传递参数
+            T->offset += T->ptr[1]->width;                                                                                    //用形参单元宽度修改函数局部变量的起始偏移量
             T->ptr[2]->offset = T->offset;
             strcpy(T->ptr[2]->Snext, newLabel()); //函数体语句执行结束后的位置属性
             semantic_Analysis(T->ptr[2]);         //处理函数体结点
             //计算活动记录大小,这里offset属性存放的是活动记录大小，不是偏移
             symbolTable.symbols[T->ptr[1]->place].offset = T->offset + T->ptr[2]->width;
             T->code = merge(3, T->ptr[1]->code, T->ptr[2]->code, genLabel(T->ptr[2]->Snext)); //函数体的代码作为函数的代码
+
+            // 检查是否有return语句
+            if (!checkReturnStmt(T->ptr[2]))
+            {
+                semantic_error(T->pos, T->type_id, "非void函数没有返回语句");
+            }
             break;
         case FUNC_DEC:                                                           //根据返回类型，函数名填写符号表
             rtn = fillSymbolTable(T->type_id, newAlias(), LEV, T->type, 'F', 0); //函数不在数据区中分配单元，偏移量为0
@@ -704,7 +727,7 @@ void semantic_Analysis(struct ASTNode *T)
             }
 #if (DEBUG)
             prn_symbol(); //c在退出一个复合语句前显示的符号表
-            system("pause");
+            // system("pause");
 #endif
             LEV--;                                                         //出复合语句，层号减1
             symbolTable.index = symbol_scope_TX.TX[--symbol_scope_TX.top]; //删除该作用域中的符号
@@ -875,9 +898,12 @@ void semantic_Analysis(struct ASTNode *T)
             if (T->ptr[0])
             {
                 T->ptr[0]->offset = T->offset;
+                int funType = symbolTable.symbols[T->ptr[0]->place].type;
                 Exp(T->ptr[0]);
-
-                /*需要判断返回值类型是否匹配*/
+                if (funType != T->ptr[0]->type)
+                {
+                    semantic_error(T->ptr[0]->pos, T->ptr[0]->type_id, "返回值与函数类型不匹配");
+                }
 
                 T->width = T->ptr[0]->width;
                 result.kind = ID;

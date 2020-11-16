@@ -2,6 +2,7 @@
     "files.associations": {
         "*.nee": "c",
         "*.output": "plaintext",
-        "random": "c"
+        "random": "c",
+        "typeinfo": "cpp"
     }
 }
