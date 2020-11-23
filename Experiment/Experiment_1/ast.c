@@ -90,11 +90,34 @@ void display(struct ASTNode *T, int indent)
             display(T->ptr[1], indent); //显示剩下语句
             break;
         case WHILE:
-            printf("%*c循环语句：(%d)\n", indent, ' ', T->pos);
-            printf("%*c循环条件：\n", indent + 3, ' ');
+            printf("%*cWHILE 循环语句：(%d)\n", indent, ' ', T->pos);
+            printf("%*cWHILE 循环条件：\n", indent + 3, ' ');
             display(T->ptr[0], indent + 6); //显示循环条件
-            printf("%*c循环体：(%d)\n", indent + 3, ' ', T->pos);
+            printf("%*cWHILE 循环体：(%d)\n", indent + 3, ' ', T->pos);
             display(T->ptr[1], indent + 6); //显示循环体
+            break;
+        case SWITCH:
+            printf("%*cSWITCH 分支选择语句：(%d)\n", indent, ' ', T->pos);
+            printf("%*cSWITCH 分支判断条件：\n", indent + 3, ' ');
+            display(T->ptr[0], indent + 6);
+            printf("%*cSWITCH 分支语句体：(%d)\n", indent + 3, ' ', T->pos);
+            display(T->ptr[1], indent + 6); //显示循环体
+            break;
+        case SWITCH_STMT:
+            display(T->ptr[0], indent);
+            break;
+        case SWITCH_STMT_LIST:
+            printf("%*c当前分支条件：\n", indent, ' ');
+            display(T->ptr[0], indent + 3);
+            printf("%*c分支语句体：(%d)\n", indent + 3, ' ', T->pos);
+            display(T->ptr[1], indent + 6);
+            display(T->ptr[2], indent);
+            break;
+        case BREAK:
+            printf("%*c跳出语句：(%d)\n", indent, ' ', T->pos);
+            break;
+        case CONTINUE:
+            printf("%*c循环继续语句：(%d)\n", indent, ' ', T->pos);
             break;
         case IF_THEN:
             printf("%*c条件语句(IF_THEN)：(%d)\n", indent, ' ', T->pos);
@@ -180,6 +203,10 @@ void display(struct ASTNode *T, int indent)
             break;
         case NOT:
         case UMINUS:
+        case LEFT_INCREMENT:
+        case RIGHT_INCREMENT:
+        case LEFT_DECREMENT:
+        case RIGHT_DECREMENT:
             printf("%*c%s\n", indent, ' ', T->type_id);
             display(T->ptr[0], indent + 3);
             break;

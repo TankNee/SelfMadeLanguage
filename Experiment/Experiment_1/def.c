@@ -197,7 +197,7 @@ void semantic_error(int line, char *msg1, char *msg2)
 void prn_symbol()
 { //显示符号表
     int i = 0;
-    printf("==============================符号表===================================");
+    printf("==============================符号表========================================");
     printf("\n%s \t\t%s \t\t%s \t\t%s \t\t%s \t\t%s\n", "符号名", "别 名", "层 号", "类  型", "标 记", "偏移量");
     for (i = 0; i < symbolTable.index; i++)
     {
@@ -513,16 +513,39 @@ void Exp(struct ASTNode *T)
             result.offset = symbolTable.symbols[T->place].offset;
             T->code = merge(3, T->ptr[0]->code, T->ptr[1]->code, genIR(T->kind, opn1, opn2, result));
             T->width = T->ptr[0]->width + T->ptr[1]->width + (T->type == INT ? 4 : T->type == FLOAT ? 8 : 1);
+            // printf("类型：%d\n", T->type);
             break;
         case NOT: //未写完整
             break;
         case UMINUS: //未写完整
             break;
+        case LEFT_INCREMENT:
+        case RIGHT_INCREMENT:
+        case LEFT_DECREMENT:
+        case RIGHT_DECREMENT:
+            // printf("自增自减");
+            if (T->ptr[0]->kind != ID && T->ptr[0]->kind != ARRAY_CALL)
+            {
+                semantic_error(T->pos, "", "自增自减的对象不是左值表达式");
+            }
+            break;
         case ARRAY_CALL:
             T0 = T;
+            int flag = 0, count = 0;
             while (T0->ptr[0])
             {
+                if (T0->ptr[1]->kind != INT)
+                {
+                    semantic_Analysis(T0->ptr[1]);
+                    if (T0->ptr[1]->type != INT)
+                        flag = 1;
+                }
                 T0 = T0->ptr[0];
+                count++;
+            }
+            if (flag)
+            {
+                semantic_error(T0->pos, T0->type_id, "数组下标不是整形表达式");
             }
             rtn = searchSymbolTable(T0->type_id);
             if (rtn == -1)
@@ -533,6 +556,11 @@ void Exp(struct ASTNode *T)
             if (!symbolTable.symbols[rtn].array)
             {
                 semantic_error(T->pos, T0->type_id, "不是一个数组");
+                break;
+            }
+            if (symbolTable.symbols[rtn].array != count)
+            {
+                semantic_error(T->pos, T0->type_id, "数组参数传入个数不符");
                 break;
             }
             break;
@@ -637,12 +665,15 @@ void semantic_Analysis(struct ASTNode *T)
             T->offset += T->ptr[1]->width;                                                                                    //用形参单元宽度修改函数局部变量的起始偏移量
             T->ptr[2]->offset = T->offset;
             strcpy(T->ptr[2]->Snext, newLabel()); //函数体语句执行结束后的位置属性
-            semantic_Analysis(T->ptr[2]);         //处理函数体结点
+            isFuncBody = 1;
+            semantic_Analysis(T->ptr[2]); //处理函数体结点
+            isFuncBody = 0;
             //计算活动记录大小,这里offset属性存放的是活动记录大小，不是偏移
             symbolTable.symbols[T->ptr[1]->place].offset = T->offset + T->ptr[2]->width;
             T->code = merge(3, T->ptr[1]->code, T->ptr[2]->code, genLabel(T->ptr[2]->Snext)); //函数体的代码作为函数的代码
 
             // 检查是否有return语句
+            // TODO:
             if (!checkReturnStmt(T->ptr[2]))
             {
                 semantic_error(T->pos, T->type_id, "非void函数没有返回语句");
@@ -727,7 +758,7 @@ void semantic_Analysis(struct ASTNode *T)
             }
 #if (DEBUG)
             prn_symbol(); //c在退出一个复合语句前显示的符号表
-            // system("pause");
+                          // system("pause");
 #endif
             LEV--;                                                         //出复合语句，层号减1
             symbolTable.index = symbol_scope_TX.TX[--symbol_scope_TX.top]; //删除该作用域中的符号
@@ -798,10 +829,11 @@ void semantic_Analysis(struct ASTNode *T)
                 {
 
                     struct ASTNode *T1 = T0;
-                    int length = 1;
+                    int length = 1, count = 0;
                     while (T1->ptr[0]->ptr[0])
                     {
                         length *= T1->ptr[0]->type_int;
+                        count++;
                         T1 = T1->ptr[0];
                     }
                     rtn = fillSymbolTable(T1->ptr[0]->type_id, newAlias(), LEV, T0->ptr[0]->type, 'V', T->offset + T->width);
@@ -809,7 +841,7 @@ void semantic_Analysis(struct ASTNode *T)
                         semantic_error(T0->ptr[0]->pos, T0->ptr[0]->type_id, "变量重复定义");
                     else
                         T0->ptr[0]->place = rtn;
-                    symbolTable.symbols[symbolTable.index - 1].array = 1;
+                    symbolTable.symbols[symbolTable.index - 1].array = count;
                     T->width += width * length;
                 }
                 T0 = T0->ptr[1];
@@ -882,12 +914,28 @@ void semantic_Analysis(struct ASTNode *T)
             boolExp(T->ptr[0]); //循环条件，要单独按短路代码处理
             T->width = T->ptr[0]->width;
             strcpy(T->ptr[1]->Snext, newLabel());
+            isCycleBody = 1;
             semantic_Analysis(T->ptr[1]); //循环体
+            isCycleBody = 0;
             if (T->width < T->ptr[1]->width)
                 T->width = T->ptr[1]->width;
             T->code = merge(5, genLabel(T->ptr[1]->Snext), T->ptr[0]->code,
                             genLabel(T->ptr[0]->Etrue), T->ptr[1]->code, genGoto(T->ptr[1]->Snext));
             break;
+        case SWITCH_STMT_LIST:
+        case SWITCH_DEFAULT_STMT:
+            isSwitchCase = 1;
+            if (T->ptr[1])
+            {
+                semantic_Analysis(T->ptr[1]);
+            }
+            else
+            {
+                semantic_Analysis(T->ptr[0]);
+            }
+            isSwitchCase = 0;
+            break;
+
         case EXP_STMT:
             T->ptr[0]->offset = T->offset;
             semantic_Analysis(T->ptr[0]);
@@ -897,12 +945,18 @@ void semantic_Analysis(struct ASTNode *T)
         case RETURN:
             if (T->ptr[0])
             {
+                if (!isFuncBody)
+                {
+                    // 实质上在语法分析阶段就会报错
+                    semantic_error(T->ptr[0]->pos, T->ptr[0]->type_id, "return 不在函数体中");
+                }
                 T->ptr[0]->offset = T->offset;
                 int funType = symbolTable.symbols[T->ptr[0]->place].type;
                 Exp(T->ptr[0]);
                 if (funType != T->ptr[0]->type)
                 {
                     semantic_error(T->ptr[0]->pos, T->ptr[0]->type_id, "返回值与函数类型不匹配");
+                    // printf("expected: %d, unexpected: %d\n", funType, T->ptr[0]->type);
                 }
 
                 T->width = T->ptr[0]->width;
@@ -916,6 +970,27 @@ void semantic_Analysis(struct ASTNode *T)
                 T->width = 0;
                 result.kind = 0;
                 T->code = genIR(RETURN, opn1, opn2, result);
+            }
+            break;
+        case BREAK:
+            if (!isSwitchCase)
+            {
+                if (!isCycleBody)
+                {
+                    semantic_error(T->pos, T->type_id, "break 不在 循环体中");
+                }
+                else
+                    semantic_error(T->pos, T->type_id, "break 不在 switch 分支中");
+            }
+            else if (!isCycleBody)
+            {
+                semantic_error(T->pos, T->type_id, "break 不在 循环体中");
+            }
+            break;
+        case CONTINUE:
+            if (!isCycleBody)
+            {
+                semantic_error(T->pos, T->type_id, "continue 不在 循环中");
             }
             break;
         case ID:
@@ -933,6 +1008,10 @@ void semantic_Analysis(struct ASTNode *T)
         case NOT:
         case UMINUS:
         case FUNC_CALL:
+        case LEFT_INCREMENT:
+        case RIGHT_INCREMENT:
+        case LEFT_DECREMENT:
+        case RIGHT_DECREMENT:
             Exp(T); //处理基本表达式
             break;
         }

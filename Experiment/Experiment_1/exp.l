@@ -33,7 +33,10 @@ float  	([0-9]*\.[0-9]+)|([0-9]+\.)
 <INITIAL>"if"         	{return IF;}
 <INITIAL>"else"       	{return ELSE;}
 <INITIAL>"while"      	{return WHILE;}
+<INITIAL>"default"		{return DEFAULT;}
 <INITIAL>"break"        {return BREAK;}
+<INITIAL>"switch"		{return SWITCH;}
+<INITIAL>"case"			{return CASE;}
 <INITIAL>"continue"     {return CONTINUE;}
 
 <INITIAL>{id}       	{strcpy(yylval.type_id,  yytext); return ID;}
@@ -46,6 +49,7 @@ float  	([0-9]*\.[0-9]+)|([0-9]+\.)
 <INITIAL>"-"			{return MINUS;}
 <INITIAL>"*"			{return STAR;}
 <INITIAL>"/"			{return DIV;}
+<INITIAL>":"			{return COLON;}
 <INITIAL>"&&"        	{return AND;}
 <INITIAL>"||"        	{return OR;}
 <INITIAL>"!"			{return NOT;}

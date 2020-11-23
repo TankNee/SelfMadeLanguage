@@ -6,16 +6,20 @@
 #define MAXLENGTH 200
 #define DX 3 * sizeof(int) /*活动记录控制信息需要的单元数，这个根据实际系统调整*/
 /* 字符颜色的宏定义 */
-#define    COLOR_NONE			"\033[0m"
-#define    FONT_COLOR_RED		"\033[0;31m"
-#define    FONT_COLOR_BLUE		"\033[1;34m"
+#define COLOR_NONE "\033[0m"
+#define FONT_COLOR_RED "\033[0;31m"
+#define FONT_COLOR_BLUE "\033[1;34m"
 
-#define    BACKGROUND_COLOR_RED	"\033[41m"    
+#define BACKGROUND_COLOR_RED "\033[41m"
 
-#define    BG_RED_FONT_YELLOW	"\033[41;33m"
+#define BG_RED_FONT_YELLOW "\033[41;33m"
 
 //以下语法树结点类型、三地址结点类型等定义仅供参考，实验时一定要根据自己的理解来定义
 int LEV; //层号
+int isFuncBody;     // 是否在函数体中
+int isCycleBody;    // 是否在循环体中
+int isSwitchCase;   // 是否在switch分支中
+
 struct opn
 {
     int kind; //标识联合成员的属性
@@ -44,10 +48,10 @@ struct ASTNode
     int kind;
     union
     {
-        char type_id[33];       // 由标识符生成的叶结点
-        int type_int;           // 由整常数生成的叶结点
-        float type_float;       // 由浮点常数生成的叶结点
-        char type_char;         // 由单字符生成的叶节点
+        char type_id[33]; // 由标识符生成的叶结点
+        int type_int;     // 由整常数生成的叶结点
+        float type_float; // 由浮点常数生成的叶结点
+        char type_char;   // 由单字符生成的叶节点
     };
     struct ASTNode *ptr[4];     //由kind确定有多少棵子树
     int place;                  //存放（临时）变量在符号表的位置序号
@@ -70,7 +74,7 @@ struct symbol
     char alias[10]; //别名，为解决嵌套层次使用
     char flag;      //符号标记，函数：'F'  变量：'V'   参数：'P'  临时变量：'T'
     char offset;    //外部变量和局部变量在其静态数据区或活动记录中的偏移量，
-    int array;//数组长度，对数组类型对符号适用
+    int array;      //数组长度，对数组类型对符号适用
                     //或记录函数活动记录大小，目标代码生成时使用
                     //函数入口等实验可能会用到的属性...
 };
