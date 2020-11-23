@@ -93,12 +93,25 @@ SwitchStmtList: {$$=NULL;}                                                      
         | CASE Exp COLON StmList SwitchStmtList         {$$=mknode(3,SWITCH_STMT_LIST,yylineno,$2,$4,$5);}      // 条件语句
         | DEFAULT COLON StmList                         {$$=mknode(1,SWITCH_DEFAULT_STMT,yylineno,$3);}         // 默认跳出语句
         ;
+
 Stmt:   Exp SEMI    {$$=mknode(1,EXP_STMT,yylineno,$1);}
       | CompSt      {$$=$1;}                                                                    //复合语句结点直接最为语句结点，不再生成新的结点
       | RETURN Exp SEMI   {$$=mknode(1,RETURN,yylineno,$2);}
       | IF LP Exp RP Stmt %prec LOWER_THEN_ELSE {$$=mknode(2,IF_THEN,yylineno,$3,$5);}
       | IF LP Exp RP Stmt ELSE Stmt             {$$=mknode(3,IF_THEN_ELSE,yylineno,$3,$5,$7);}
       | WHILE LP Exp RP Stmt                    {$$=mknode(2,WHILE,yylineno,$3,$5);}
+
+      | FOR LP SEMI Exp SEMI Exp RP Stmt        {$$=mknode(3,FOR,yylineno,$8,$4,$6);}
+      | FOR LP Def SEMI Exp RP Stmt             {$$=mknode(3,FOR,yylineno,$7,$3,$5);}
+      | FOR LP Def Exp SEMI RP Stmt             {$$=mknode(3,FOR,yylineno,$7,$3,$4);}
+
+      | FOR LP SEMI SEMI Exp RP Stmt            {$$=mknode(2,FOR,yylineno,$7,$5);}
+      | FOR LP SEMI Exp SEMI RP Stmt            {$$=mknode(2,FOR,yylineno,$7,$4);}
+      | FOR LP Def SEMI SEMI RP Stmt            {$$=mknode(2,FOR,yylineno,$7,$3);}
+
+      | FOR LP SEMI SEMI RP Stmt                {$$=mknode(1,FOR,yylineno,$6);}
+
+      | FOR LP Def Exp SEMI Exp RP Stmt         {$$=mknode(4,FOR,yylineno,$8,$3,$4,$6);}
       | SWITCH LP Exp RP SwitchStmt             {$$=mknode(2,SWITCH,yylineno,$3,$5);}
       | BREAK SEMI                              {$$=mknode(0,BREAK,yylineno);}
       | CONTINUE SEMI                           {$$=mknode(0,CONTINUE,yylineno);}

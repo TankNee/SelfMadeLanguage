@@ -10,8 +10,14 @@ int func(int v1, int v2)
     // case 2:
     //     break;
     // }
+    int i = 1;
+    for (; i < 2; i++)
+    {
+        int x = 1;
+        x++;
+    }
 
-    return 1;
+    // return 1;
     // return '2';
 }
 
@@ -56,10 +62,10 @@ int main()
     // return 1.0;
     // 12++;
     // 没有报错
-    // arr[(0 + 2) + (1++)][1];
+    // arr[1++][1];
 
     // Error 12 break 语句不在循环语句或 switch 语句中；
-    // break;
+    // break; TODO: 考虑层级
 
     // Error 13 continue 语句不在循环语句中；
     // continue;

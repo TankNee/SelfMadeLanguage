@@ -37,6 +37,7 @@ float  	([0-9]*\.[0-9]+)|([0-9]+\.)
 <INITIAL>"break"        {return BREAK;}
 <INITIAL>"switch"		{return SWITCH;}
 <INITIAL>"case"			{return CASE;}
+<INITIAL>"for"			{return FOR;}
 <INITIAL>"continue"     {return CONTINUE;}
 
 <INITIAL>{id}       	{strcpy(yylval.type_id,  yytext); return ID;}
