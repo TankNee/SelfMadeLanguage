@@ -11,13 +11,13 @@ int func(int v1, int v2)
     //     break;
     // }
     int i = 1;
+    // int c = 1.9;
     for (; i < 2; i++)
     {
         int x = 1;
         x++;
     }
-
-    // return 1;
+    return 1;
     // return '2';
 }
 

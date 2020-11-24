@@ -101,15 +101,15 @@ Stmt:   Exp SEMI    {$$=mknode(1,EXP_STMT,yylineno,$1);}
       | IF LP Exp RP Stmt ELSE Stmt             {$$=mknode(3,IF_THEN_ELSE,yylineno,$3,$5,$7);}
       | WHILE LP Exp RP Stmt                    {$$=mknode(2,WHILE,yylineno,$3,$5);}
 
-      | FOR LP SEMI Exp SEMI Exp RP Stmt        {$$=mknode(3,FOR,yylineno,$8,$4,$6);}
-      | FOR LP Def SEMI Exp RP Stmt             {$$=mknode(3,FOR,yylineno,$7,$3,$5);}
-      | FOR LP Def Exp SEMI RP Stmt             {$$=mknode(3,FOR,yylineno,$7,$3,$4);}
+      | FOR LP SEMI Exp SEMI Exp RP Stmt        {$$=mknode(4,FOR,yylineno,$8,NULL,$4,$6);}
+      | FOR LP Def SEMI Exp RP Stmt             {$$=mknode(3,FOR,yylineno,$7,$3,NULL,$5);}
+      | FOR LP Def Exp SEMI RP Stmt             {$$=mknode(3,FOR,yylineno,$7,$3,$4,NULL);}
 
-      | FOR LP SEMI SEMI Exp RP Stmt            {$$=mknode(2,FOR,yylineno,$7,$5);}
-      | FOR LP SEMI Exp SEMI RP Stmt            {$$=mknode(2,FOR,yylineno,$7,$4);}
-      | FOR LP Def SEMI SEMI RP Stmt            {$$=mknode(2,FOR,yylineno,$7,$3);}
+      | FOR LP SEMI SEMI Exp RP Stmt            {$$=mknode(2,FOR,yylineno,$7,NULL,NULL,$5);}
+      | FOR LP SEMI Exp SEMI RP Stmt            {$$=mknode(2,FOR,yylineno,$7,NULL,$4,NULL);}
+      | FOR LP Def SEMI SEMI RP Stmt            {$$=mknode(2,FOR,yylineno,$7,$3,NULL,NULL);}
 
-      | FOR LP SEMI SEMI RP Stmt                {$$=mknode(1,FOR,yylineno,$6);}
+      | FOR LP SEMI SEMI RP Stmt                {$$=mknode(1,FOR,yylineno,$6,NULL,NULL,NULL);}
 
       | FOR LP Def Exp SEMI Exp RP Stmt         {$$=mknode(4,FOR,yylineno,$8,$3,$4,$6);}
       | SWITCH LP Exp RP SwitchStmt             {$$=mknode(2,SWITCH,yylineno,$3,$5);}

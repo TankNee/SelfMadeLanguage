@@ -125,6 +125,8 @@ void prnIR(struct codenode *head)
             sprintf(opnstr2, "#%d", h->opn2.const_int);
         if (h->opn2.kind == FLOAT)
             sprintf(opnstr2, "#%f", h->opn2.const_float);
+        if (h->opn2.kind == CHAR)
+            sprintf(opnstr2, "#%c", h->opn2.const_char);
         if (h->opn2.kind == ID)
             sprintf(opnstr2, "%s", h->opn2.id);
         sprintf(resultstr, "%s", h->result.id);
