@@ -1773,7 +1773,7 @@ yyreduce:
     {
         // 打印抽象语法树 
         display((yyvsp[(1) - (1)].ptr),0);
-        semantic_Analysis((yyvsp[(1) - (1)].ptr));
+        semantic_Analysis0((yyvsp[(1) - (1)].ptr));
 ;}
     break;
 
@@ -1919,42 +1919,42 @@ yyreduce:
 
   case 31:
 #line 104 "parser.y"
-    {(yyval.ptr)=mknode(4,FOR,yylineno,(yyvsp[(8) - (8)].ptr),NULL,(yyvsp[(4) - (8)].ptr),(yyvsp[(6) - (8)].ptr));;}
+    {(yyval.ptr)=mknode(4,FOR,yylineno,NULL,(yyvsp[(4) - (8)].ptr),(yyvsp[(6) - (8)].ptr),(yyvsp[(8) - (8)].ptr));;}
     break;
 
   case 32:
 #line 105 "parser.y"
-    {(yyval.ptr)=mknode(3,FOR,yylineno,(yyvsp[(7) - (7)].ptr),(yyvsp[(3) - (7)].ptr),NULL,(yyvsp[(5) - (7)].ptr));;}
+    {(yyval.ptr)=mknode(3,FOR,yylineno,(yyvsp[(3) - (7)].ptr),NULL,(yyvsp[(5) - (7)].ptr),(yyvsp[(7) - (7)].ptr));;}
     break;
 
   case 33:
 #line 106 "parser.y"
-    {(yyval.ptr)=mknode(3,FOR,yylineno,(yyvsp[(7) - (7)].ptr),(yyvsp[(3) - (7)].ptr),(yyvsp[(4) - (7)].ptr),NULL);;}
+    {(yyval.ptr)=mknode(3,FOR,yylineno,(yyvsp[(3) - (7)].ptr),(yyvsp[(4) - (7)].ptr),NULL,(yyvsp[(7) - (7)].ptr));;}
     break;
 
   case 34:
 #line 108 "parser.y"
-    {(yyval.ptr)=mknode(2,FOR,yylineno,(yyvsp[(7) - (7)].ptr),NULL,NULL,(yyvsp[(5) - (7)].ptr));;}
+    {(yyval.ptr)=mknode(2,FOR,yylineno,NULL,NULL,(yyvsp[(5) - (7)].ptr),(yyvsp[(7) - (7)].ptr));;}
     break;
 
   case 35:
 #line 109 "parser.y"
-    {(yyval.ptr)=mknode(2,FOR,yylineno,(yyvsp[(7) - (7)].ptr),NULL,(yyvsp[(4) - (7)].ptr),NULL);;}
+    {(yyval.ptr)=mknode(2,FOR,yylineno,NULL,(yyvsp[(4) - (7)].ptr),NULL,(yyvsp[(7) - (7)].ptr));;}
     break;
 
   case 36:
 #line 110 "parser.y"
-    {(yyval.ptr)=mknode(2,FOR,yylineno,(yyvsp[(7) - (7)].ptr),(yyvsp[(3) - (7)].ptr),NULL,NULL);;}
+    {(yyval.ptr)=mknode(2,FOR,yylineno,(yyvsp[(3) - (7)].ptr),NULL,NULL,(yyvsp[(7) - (7)].ptr));;}
     break;
 
   case 37:
 #line 112 "parser.y"
-    {(yyval.ptr)=mknode(1,FOR,yylineno,(yyvsp[(6) - (6)].ptr),NULL,NULL,NULL);;}
+    {(yyval.ptr)=mknode(1,FOR,yylineno,NULL,NULL,NULL,(yyvsp[(6) - (6)].ptr));;}
     break;
 
   case 38:
 #line 114 "parser.y"
-    {(yyval.ptr)=mknode(4,FOR,yylineno,(yyvsp[(8) - (8)].ptr),(yyvsp[(3) - (8)].ptr),(yyvsp[(4) - (8)].ptr),(yyvsp[(6) - (8)].ptr));;}
+    {(yyval.ptr)=mknode(4,FOR,yylineno,(yyvsp[(3) - (8)].ptr),(yyvsp[(4) - (8)].ptr),(yyvsp[(6) - (8)].ptr),(yyvsp[(8) - (8)].ptr));;}
     break;
 
   case 39:

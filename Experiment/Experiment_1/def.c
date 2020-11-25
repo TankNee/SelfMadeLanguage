@@ -119,6 +119,8 @@ void prnIR(struct codenode *head)
             sprintf(opnstr1, "#%d", h->opn1.const_int);
         if (h->opn1.kind == FLOAT)
             sprintf(opnstr1, "#%f", h->opn1.const_float);
+        if (h->opn1.kind == CHAR)
+            sprintf(opnstr1, "#%c", h->opn1.const_char);
         if (h->opn1.kind == ID)
             sprintf(opnstr1, "%s", h->opn1.id);
         if (h->opn2.kind == INT)
@@ -667,9 +669,9 @@ void semantic_Analysis(struct ASTNode *T)
             T->offset += T->ptr[1]->width;                                                                                    //用形参单元宽度修改函数局部变量的起始偏移量
             T->ptr[2]->offset = T->offset;
             strcpy(T->ptr[2]->Snext, newLabel()); //函数体语句执行结束后的位置属性
-            isFuncBody = 1;
+            isFuncBody += (LEV + 1);
             semantic_Analysis(T->ptr[2]); //处理函数体结点
-            isFuncBody = 0;
+            isFuncBody -= (LEV + 1);
             //计算活动记录大小,这里offset属性存放的是活动记录大小，不是偏移
             symbolTable.symbols[T->ptr[1]->place].offset = T->offset + T->ptr[2]->width;
             T->code = merge(3, T->ptr[1]->code, T->ptr[2]->code, genLabel(T->ptr[2]->Snext)); //函数体的代码作为函数的代码
@@ -916,17 +918,43 @@ void semantic_Analysis(struct ASTNode *T)
             boolExp(T->ptr[0]); //循环条件，要单独按短路代码处理
             T->width = T->ptr[0]->width;
             strcpy(T->ptr[1]->Snext, newLabel());
-            isCycleBody = 1;
+            isCycleBody += (LEV + 1);
             semantic_Analysis(T->ptr[1]); //循环体
-            isCycleBody = 0;
+            isCycleBody -= (LEV + 1);
             if (T->width < T->ptr[1]->width)
                 T->width = T->ptr[1]->width;
             T->code = merge(5, genLabel(T->ptr[1]->Snext), T->ptr[0]->code,
                             genLabel(T->ptr[0]->Etrue), T->ptr[1]->code, genGoto(T->ptr[1]->Snext));
             break;
+        case FOR:
+            if (T->ptr[0])
+            {
+                semantic_Analysis(T->ptr[0]);
+            }
+            if (T->ptr[1])
+            {
+                strcpy(T->ptr[1]->Etrue, newLabel()); //子结点继承属性的计算
+                strcpy(T->ptr[1]->Efalse, T->Snext);
+                T->ptr[1]->offset = T->ptr[1]->offset = T->offset;
+                boolExp(T->ptr[1]); //循环条件，要单独按短路代码处理
+                T->width = T->ptr[1]->width;
+            }
+            if (T->ptr[2])
+            {
+                semantic_Analysis(T->ptr[2]);
+            }
+            strcpy(T->ptr[3]->Snext, newLabel());
+            isCycleBody += (LEV + 1);
+            semantic_Analysis(T->ptr[3]); //循环体
+            isCycleBody -= (LEV + 1);
+            if (T->width < T->ptr[3]->width)
+                T->width = T->ptr[3]->width;
+            T->code = merge(5, genLabel(T->ptr[3]->Snext), T->ptr[1]->code,
+                            genLabel(T->ptr[1]->Etrue), T->ptr[3]->code, genGoto(T->ptr[3]->Snext));
+            break;
         case SWITCH_STMT_LIST:
         case SWITCH_DEFAULT_STMT:
-            isSwitchCase = 1;
+            isSwitchCase += (LEV + 1);
             if (T->ptr[1])
             {
                 semantic_Analysis(T->ptr[1]);
@@ -935,7 +963,7 @@ void semantic_Analysis(struct ASTNode *T)
             {
                 semantic_Analysis(T->ptr[0]);
             }
-            isSwitchCase = 0;
+            isSwitchCase -= (LEV + 1);
             break;
 
         case EXP_STMT:
@@ -979,10 +1007,10 @@ void semantic_Analysis(struct ASTNode *T)
             {
                 if (!isCycleBody)
                 {
-                    semantic_error(T->pos, T->type_id, "break 不在 循环体中");
+                    semantic_error(T->pos, T->type_id, "break 不在 循环体或者switch分支中");
                 }
                 else
-                    semantic_error(T->pos, T->type_id, "break 不在 switch 分支中");
+                    break;
             }
             else if (!isCycleBody)
             {
@@ -1023,11 +1051,11 @@ void semantic_Analysis(struct ASTNode *T)
 void semantic_Analysis0(struct ASTNode *T)
 {
     symbolTable.index = 0;
-    fillSymbolTable("read", "", 0, INT, 'F', 4);
-    symbolTable.symbols[0].paramnum = 0; //read的形参个数
-    fillSymbolTable("write", "", 0, INT, 'F', 4);
-    symbolTable.symbols[1].paramnum = 1;
-    fillSymbolTable("x", "", 1, INT, 'P', 12);
+    // fillSymbolTable("read", "", 0, INT, 'F', 4);
+    // symbolTable.symbols[0].paramnum = 0; //read的形参个数
+    // fillSymbolTable("write", "", 0, INT, 'F', 4);
+    // symbolTable.symbols[1].paramnum = 1;
+    // fillSymbolTable("x", "", 1, INT, 'P', 12);
     symbol_scope_TX.TX[0] = 0; //外部变量在符号表中的起始序号为0
     symbol_scope_TX.top = 1;
     T->offset = 0; //外部变量在数据区的偏移量

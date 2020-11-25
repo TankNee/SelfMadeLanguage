@@ -842,82 +842,82 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 YY_RULE_SETUP
 #line 25 "exp.l"
-{yylval.type_int=atoi(yytext); return INT;}
+{printf(FONT_COLOR_BLUE"(INT,%d)\n"COLOR_NONE,atoi(yytext));yylval.type_int=atoi(yytext); return INT;}
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
 #line 26 "exp.l"
-{yylval.type_float=atof(yytext); return FLOAT;}
+{printf(FONT_COLOR_BLUE"(FLOAT,%f)\n"COLOR_NONE,atof(yytext));yylval.type_float=atof(yytext); return FLOAT;}
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
 #line 28 "exp.l"
-{strcpy(yylval.type_id,  yytext); return TYPE;}
+{printf(FONT_COLOR_BLUE"(INT,%s)\n"COLOR_NONE,yytext);strcpy(yylval.type_id,  yytext); return TYPE;}
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
 #line 29 "exp.l"
-{strcpy(yylval.type_id,  yytext); return TYPE;}
+{printf(FONT_COLOR_BLUE"(FLOAT,%s)\n"COLOR_NONE,yytext);strcpy(yylval.type_id,  yytext); return TYPE;}
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
 #line 30 "exp.l"
-{strcpy(yylval.type_id,  yytext); return TYPE;}
+{printf(FONT_COLOR_BLUE"(CHAR,%s)\n"COLOR_NONE,yytext);strcpy(yylval.type_id,  yytext); return TYPE;}
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
 #line 32 "exp.l"
-{return RETURN;}
+{printf(FONT_COLOR_BLUE"(RETURN,%s)\n"COLOR_NONE,yytext);return RETURN;}
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
 #line 33 "exp.l"
-{return IF;}
+{printf(FONT_COLOR_BLUE"(IF,%s)\n"COLOR_NONE,yytext);return IF;}
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 34 "exp.l"
-{return ELSE;}
+{printf(FONT_COLOR_BLUE"(ELSE,%s)\n"COLOR_NONE,yytext);return ELSE;}
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 35 "exp.l"
-{return WHILE;}
+{printf(FONT_COLOR_BLUE"(WHILE,%s)\n"COLOR_NONE,yytext);return WHILE;}
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 36 "exp.l"
-{return DEFAULT;}
+{printf(FONT_COLOR_BLUE"(DEFAULT,%s)\n"COLOR_NONE,yytext);return DEFAULT;}
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 37 "exp.l"
-{return BREAK;}
+{printf(FONT_COLOR_BLUE"(BREAK,%s)\n"COLOR_NONE,yytext);return BREAK;}
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 38 "exp.l"
-{return SWITCH;}
+{printf(FONT_COLOR_BLUE"(SWITCH,%s)\n"COLOR_NONE,yytext);return SWITCH;}
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 39 "exp.l"
-{return CASE;}
+{printf(FONT_COLOR_BLUE"(CASE,%s)\n"COLOR_NONE,yytext);return CASE;}
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
 #line 40 "exp.l"
-{return FOR;}
+{printf(FONT_COLOR_BLUE"(FOR,%s)\n"COLOR_NONE,yytext);return FOR;}
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
 #line 41 "exp.l"
-{return CONTINUE;}
+{printf(FONT_COLOR_BLUE"(CONTINUE,%s)\n"COLOR_NONE,yytext);return CONTINUE;}
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
 #line 43 "exp.l"
-{strcpy(yylval.type_id,  yytext); return ID;}
+{printf(FONT_COLOR_BLUE"(ID,%s)\n"COLOR_NONE,yytext);strcpy(yylval.type_id,  yytext); return ID;}
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
@@ -927,97 +927,97 @@ YY_RULE_SETUP
 case 18:
 YY_RULE_SETUP
 #line 46 "exp.l"
-{return COMMA;}
+{printf(FONT_COLOR_BLUE"(COMMA,%s)\n"COLOR_NONE,yytext);return COMMA;}
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 47 "exp.l"
-{strcpy(yylval.type_id, yytext); return RELOP;}
+{printf(FONT_COLOR_BLUE"(RELOP,%s)\n"COLOR_NONE,yytext);strcpy(yylval.type_id, yytext); return RELOP;}
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
 #line 48 "exp.l"
-{return ASSIGNOP;}
+{printf(FONT_COLOR_BLUE"(ASSIGNOP,%s)\n"COLOR_NONE,yytext);return ASSIGNOP;}
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
 #line 49 "exp.l"
-{return PLUS;}
+{printf(FONT_COLOR_BLUE"(PLUS,%s)\n"COLOR_NONE,yytext);return PLUS;}
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
 #line 50 "exp.l"
-{return MINUS;}
+{printf(FONT_COLOR_BLUE"(MINUS,%s)\n"COLOR_NONE,yytext);return MINUS;}
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
 #line 51 "exp.l"
-{return STAR;}
+{printf(FONT_COLOR_BLUE"(STAR,%s)\n"COLOR_NONE,yytext);return STAR;}
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 52 "exp.l"
-{return DIV;}
+{printf(FONT_COLOR_BLUE"(DIV,%s)\n"COLOR_NONE,yytext);return DIV;}
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
 #line 53 "exp.l"
-{return COLON;}
+{printf(FONT_COLOR_BLUE"(COLON,%s)\n"COLOR_NONE,yytext);return COLON;}
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
 #line 54 "exp.l"
-{return AND;}
+{printf(FONT_COLOR_BLUE"(AND,%s)\n"COLOR_NONE,yytext);return AND;}
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
 #line 55 "exp.l"
-{return OR;}
+{printf(FONT_COLOR_BLUE"(OR,%s)\n"COLOR_NONE,yytext);return OR;}
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
 #line 56 "exp.l"
-{return NOT;}
+{printf(FONT_COLOR_BLUE"(NOT,%s)\n"COLOR_NONE,yytext);return NOT;}
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
 #line 57 "exp.l"
-{return LP;}
+{printf(FONT_COLOR_BLUE"(LP,%s)\n"COLOR_NONE,yytext);return LP;}
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
 #line 58 "exp.l"
-{return RP;}
+{printf(FONT_COLOR_BLUE"(RP,%s)\n"COLOR_NONE,yytext);return RP;}
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
 #line 59 "exp.l"
-{return LC;}
+{printf(FONT_COLOR_BLUE"(LC,%s)\n"COLOR_NONE,yytext);return LC;}
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
 #line 60 "exp.l"
-{return RC;}
+{printf(FONT_COLOR_BLUE"(RC,%s)\n"COLOR_NONE,yytext);return RC;}
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
 #line 61 "exp.l"
-{return LB;}
+{printf(FONT_COLOR_BLUE"(LB,%s)\n"COLOR_NONE,yytext);return LB;}
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
 #line 62 "exp.l"
-{return RB;}
+{printf(FONT_COLOR_BLUE"(RB,%s)\n"COLOR_NONE,yytext);return RB;}
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
 #line 63 "exp.l"
-{return INCREMENT;}
+{printf(FONT_COLOR_BLUE"(INCREMENT,%s)\n"COLOR_NONE,yytext);return INCREMENT;}
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
 #line 64 "exp.l"
-{return DECREMENT;}
+{printf(FONT_COLOR_BLUE"(DECREMENT,%s)\n"COLOR_NONE,yytext);return DECREMENT;}
 	YY_BREAK
 case 37:
 YY_RULE_SETUP

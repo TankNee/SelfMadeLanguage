@@ -12,11 +12,29 @@ int func(int v1, int v2)
     // }
     int i = 1;
     // int c = 1.9;
-    for (; i < 2; i++)
+    // for (; i < 2; i++)
+    // {
+    //     int x = 1;
+    //     x++;
+    //     for (int j = 0; j < 3; j++)
+    //     {
+    //         int z = 3;
+    //         break;
+    //     }
+    //     break;
+    // }
+    while (1)
     {
         int x = 1;
-        x++;
+        while (2)
+        {
+            int z = 3;
+            z++;
+            break;
+        }
+        break;
     }
+
     return 1;
     // return '2';
 }

@@ -53,7 +53,7 @@ int yylex();
 program: ExtDefList    {
         // 打印抽象语法树 
         display($1,0);
-        semantic_Analysis($1);
+        semantic_Analysis0($1);
 }     //显示语法树,语义分析
          ; 
 ExtDefList: {$$=NULL;}
@@ -101,17 +101,17 @@ Stmt:   Exp SEMI    {$$=mknode(1,EXP_STMT,yylineno,$1);}
       | IF LP Exp RP Stmt ELSE Stmt             {$$=mknode(3,IF_THEN_ELSE,yylineno,$3,$5,$7);}
       | WHILE LP Exp RP Stmt                    {$$=mknode(2,WHILE,yylineno,$3,$5);}
 
-      | FOR LP SEMI Exp SEMI Exp RP Stmt        {$$=mknode(4,FOR,yylineno,$8,NULL,$4,$6);}
-      | FOR LP Def SEMI Exp RP Stmt             {$$=mknode(3,FOR,yylineno,$7,$3,NULL,$5);}
-      | FOR LP Def Exp SEMI RP Stmt             {$$=mknode(3,FOR,yylineno,$7,$3,$4,NULL);}
+      | FOR LP SEMI Exp SEMI Exp RP Stmt        {$$=mknode(4,FOR,yylineno,NULL,$4,$6,$8);}
+      | FOR LP Def SEMI Exp RP Stmt             {$$=mknode(3,FOR,yylineno,$3,NULL,$5,$7);}
+      | FOR LP Def Exp SEMI RP Stmt             {$$=mknode(3,FOR,yylineno,$3,$4,NULL,$7);}
 
-      | FOR LP SEMI SEMI Exp RP Stmt            {$$=mknode(2,FOR,yylineno,$7,NULL,NULL,$5);}
-      | FOR LP SEMI Exp SEMI RP Stmt            {$$=mknode(2,FOR,yylineno,$7,NULL,$4,NULL);}
-      | FOR LP Def SEMI SEMI RP Stmt            {$$=mknode(2,FOR,yylineno,$7,$3,NULL,NULL);}
+      | FOR LP SEMI SEMI Exp RP Stmt            {$$=mknode(2,FOR,yylineno,NULL,NULL,$5,$7);}
+      | FOR LP SEMI Exp SEMI RP Stmt            {$$=mknode(2,FOR,yylineno,NULL,$4,NULL,$7);}
+      | FOR LP Def SEMI SEMI RP Stmt            {$$=mknode(2,FOR,yylineno,$3,NULL,NULL,$7);}
 
-      | FOR LP SEMI SEMI RP Stmt                {$$=mknode(1,FOR,yylineno,$6,NULL,NULL,NULL);}
+      | FOR LP SEMI SEMI RP Stmt                {$$=mknode(1,FOR,yylineno,NULL,NULL,NULL,$6);}
 
-      | FOR LP Def Exp SEMI Exp RP Stmt         {$$=mknode(4,FOR,yylineno,$8,$3,$4,$6);}
+      | FOR LP Def Exp SEMI Exp RP Stmt         {$$=mknode(4,FOR,yylineno,$3,$4,$6,$8);}
       | SWITCH LP Exp RP SwitchStmt             {$$=mknode(2,SWITCH,yylineno,$3,$5);}
       | BREAK SEMI                              {$$=mknode(0,BREAK,yylineno);}
       | CONTINUE SEMI                           {$$=mknode(0,CONTINUE,yylineno);}

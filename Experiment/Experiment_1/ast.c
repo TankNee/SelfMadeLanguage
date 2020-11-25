@@ -99,13 +99,13 @@ void display(struct ASTNode *T, int indent)
         case FOR:
             printf("%*cFOR 循环语句：(%d)\n", indent, ' ', T->pos);
             printf("%*cFOR 初始化循环：\n", indent + 3, ' ');
-            display(T->ptr[1], indent + 6); //显示循环条件
+            display(T->ptr[0], indent + 6); //显示循环条件
             printf("%*cFOR 循环继续条件：\n", indent + 3, ' ');
-            display(T->ptr[2], indent + 6); //显示循环条件
+            display(T->ptr[1], indent + 6); //显示循环条件
             printf("%*cFOR 循环结束后置钩子：\n", indent + 3, ' ');
-            display(T->ptr[3], indent + 6); //显示循环条件
+            display(T->ptr[2], indent + 6); //显示循环条件
             printf("%*cFOR 循环体：(%d)\n", indent + 3, ' ', T->pos);
-            display(T->ptr[0], indent + 6); //显示循环体
+            display(T->ptr[3], indent + 6); //显示循环体
             break;
         case SWITCH:
             printf("%*cSWITCH 分支选择语句：(%d)\n", indent, ' ', T->pos);
