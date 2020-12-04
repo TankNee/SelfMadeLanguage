@@ -1,24 +1,57 @@
- 函数定义：(9)
+[1;34m(INT,int)
+[0m[1;34m(ID,main)
+[0m[1;34m(LP,()
+[0m[1;34m(INT,int)
+[0m[1;34m(ID,argc)
+[0m[1;34m(RP,))
+[0m[1;34m(LC,{)
+[0m[1;34m(INT,int)
+[0m[1;34m(ID,a)
+[0m[1;34m(ASSIGNOP,=)
+[0m[1;34m(INT,3)
+[0m[1;34m(FLOAT,float)
+[0m[1;34m(ID,b)
+[0m[1;34m(ASSIGNOP,=)
+[0m[1;34m(FLOAT,1.200000)
+[0m[1;34m(RETURN,return)
+[0m[1;34m(INT,0)
+[0m[1;34m(RC,})
+[0m 函数定义：(6)
    类型： int
    函数名：main
-      无参函数
-   复合语句：(9)
+   函数形参：
+      类型：int, 参数名：argc
+   复合语句：(6)
       复合语句的变量定义部分：
-         局部变量定义：(4) 
+         局部变量定义：(3)
             类型： int
             变量名：
-                   将 a 赋值为
-                     INT：1
-                    二元式为：(INT,1)
+                  将 a 赋值为
+                     INT：3
+         局部变量定义：(4)
+            类型： float
+            变量名：
+                  将 b 赋值为
+                     FLOAT：1.200000
       复合语句的语句部分：
-         条件语句(IF_THEN)：(8)
-            条件：
-               ID： a
-               二元式为：(ID,a)
-            IF子句：(8)
-               复合语句：(7)
-                  复合语句的变量定义部分：
-                  复合语句的语句部分：
-         返回语句：(8)
+         返回语句：(5)
             INT：0
-            二元式为：(INT,0)
+==============================符号表========================================
+符号名 		别 名 		层 号 		类  型 		标 记 		偏移量
+main 		v1 		0  		int 		F 		0
+argc 		v2 		1  		int 		P 		12
+a 		v3 		1  		int 		V 		16
+ 		temp1 		1  		int 		T 		20
+b 		v4 		1  		float 		V 		24
+ 		temp2 		1  		float 		T 		25
+ 		temp3 		1  		int 		T 		33
+
+FUNCTION main :
+  PARAM v2
+  temp1 := #3
+  v3 := temp1
+  temp2 := #1.200000
+  v4 := temp2
+  temp3 := #0
+  RETURN temp3
+LABEL label1 :

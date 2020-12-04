@@ -1,12 +1,5 @@
-int main(int argc)
+int main()
 {
-    for (int i = 0; i < 3; i++)
-    {
-        int x = 1;
-        x++;
-        ++x;
-        --x;
-    }
-    break;
+    int a = 3;
     return 0;
 }

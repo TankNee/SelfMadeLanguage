@@ -1,40 +1,5 @@
 int func(int v1, int v2)
 {
-    char s = '2';
-    // break;
-    // continue;
-    // switch (1)
-    // {
-    // case 1:
-    //     break;
-    // case 2:
-    //     break;
-    // }
-    int i = 1;
-    // int c = 1.9;
-    // for (; i < 2; i++)
-    // {
-    //     int x = 1;
-    //     x++;
-    //     for (int j = 0; j < 3; j++)
-    //     {
-    //         int z = 3;
-    //         break;
-    //     }
-    //     break;
-    // }
-    while (1)
-    {
-        int x = 1;
-        while (2)
-        {
-            int z = 3;
-            z++;
-            break;
-        }
-        break;
-    }
-
     return 1;
     // return '2';
 }
@@ -45,54 +10,54 @@ int main()
     int arr[1][2];
     float c = 1.1;
     // Error 1 重复定义
-    // int iv;
+    int iv;
 
     // Error 2 使用未定义的变量
-    // variable = 3;
+    variable = 3;
 
     // Error 3 使用未定义的函数
-    // function();
+    function();
 
     // Error 4 对非函数名采用函数调用形式
-    // iv();
+    iv();
 
     // Error 5 对函数名采用非函数调用形式访问；
-    // func;
+    func;
 
     // Error 6 函数参数个数不匹配
-    // func(iv);
-    // func(iv, iv, iv);
+    func(iv);
+    func(iv, iv, iv);
 
     // Error 7 函数调用时实参和形参类型不匹配；
     // float tv;
-    // func(iv, tv);
+    func(iv, tv);
 
     // Error 8 对非数组变量采用下标变量的形式访问；
-    // iv[3];
+    iv[3];
 
     // Error 9 赋值号左边不是左值表达式
-    // func() = 3;
+    func() = 3;
 
     // Error 10 对非左值表达式进行自增、自减运算；
-    // func()++;
+    func()++;
 
     // Error 11 函数返回值类型与函数定义的返回值类型不匹配；
-    // return 1.0;
-    // 12++;
+    return 1.0;
+    12 ++;
     // 没有报错
     // arr[1++][1];
 
     // Error 12 break 语句不在循环语句或 switch 语句中；
-    // break; TODO: 考虑层级
+    break;
 
     // Error 13 continue 语句不在循环语句中；
-    // continue;
+    continue;
 
     // Error 14 函数没有返回语句（当函数返回值类型不是 void 时）；
     // void类型还没有实现
 
     // Error 15 数组下标不是整形表达式
     // 维度控制
-    // arr[1.2];
+    arr[1.2];
     return 0;
 }
